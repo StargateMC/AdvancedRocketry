@@ -216,7 +216,7 @@ public class DimensionManager implements IGalaxy {
 	 * @return next free id
 	 */
 	public int getNextFreeDim(int startingValue) {
-		for(int i = startingValue; i < 10000; i++) {
+		for(int i = startingValue; i < 1000000; i++) {
 			if(!net.minecraftforge.common.DimensionManager.isDimensionRegistered(i) && !dimensionList.containsKey(i))
 				return i;
 		}

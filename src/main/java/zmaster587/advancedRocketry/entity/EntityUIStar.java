@@ -15,7 +15,7 @@ public class EntityUIStar extends EntityUIPlanet {
 	
 	StellarBody star;
 	int subStar = -1;
-	public final static int starIDoffset = 10000;
+	public final static int starIDoffset = 1000000;
 
 	protected static final DataParameter<Integer> subStarData =  EntityDataManager.<Integer>createKey(EntityUIStar.class, DataSerializers.VARINT);
 	
