@@ -412,7 +412,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 
 	@Override
 	public String getSaveFolder() {
-		return "advRocketry/" + super.getSaveFolder();
+            return DimensionManager.getInstance().getDimensionProperties(this.getDimension()).getName();
 	}
 
 	@Override
