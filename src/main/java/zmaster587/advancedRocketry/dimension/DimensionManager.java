@@ -197,7 +197,7 @@ public class DimensionManager implements IGalaxy {
 	public void tickDimensionsClient() {
 		//Tick satellites
 		overworldProperties.updateOrbit();
-		for(int i : DimensionManager.getInstance().getLoadedDimensions()) {
+		for(int i : net.minecraftforge.common.DimensionManager.getIDs()) {
 			DimensionManager.getInstance().getDimensionProperties(i).updateOrbit();
 		}
 	}
