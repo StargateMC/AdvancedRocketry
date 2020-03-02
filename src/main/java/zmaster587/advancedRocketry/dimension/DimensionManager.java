@@ -179,10 +179,77 @@ public class DimensionManager implements IGalaxy {
 	 * @param dimId id to register the planet with
 	 * @return the name for the next planet
 	 */
-	private String getNextName(int dimId) {
-		return "Sol-" + dimId;
-	}
+        private String getAlphaNumericString(int n) 
+        { 
 
+            // chose a Character random from this String 
+            String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                        + "0123456789";
+
+            // create StringBuffer size of AlphaNumericString 
+            StringBuilder sb = new StringBuilder(n); 
+
+            for (int i = 0; i < n; i++) { 
+
+                // generate a random number between 
+                // 0 to AlphaNumericString variable length 
+                int index 
+                    = (int)(AlphaNumericString.length() 
+                            * Math.random()); 
+
+                // add Character one by one in end of sb 
+                sb.append(AlphaNumericString 
+                              .charAt(index)); 
+            } 
+
+            return sb.toString(); 
+        } 
+	private String getNextName(DimensionProperties props,StellarBody body) {
+            String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            // This is a hack to allow singleplayer to function.
+            try {
+                if (props.isMoon()) {
+                String parentName = props.getParentProperties().getName();
+                String charToReplace = parentName.substring(0,6);
+                String end = parentName.substring(7,9);
+                String moonID = null;
+                for (char ch: alphabet.toCharArray()) {
+                    moonID = charToReplace + ch + end;
+                    if (!isMoonNameUsed(moonID, props.getParentProperties())) {
+                        System.out.println(("Selecting moon name: " + moonID + " for : " + body));
+                        return moonID;
+                    }
+                }
+                    return moonID.toUpperCase();
+                } else {
+                    String planetID = null;
+                    while (planetID == null || isPlanetNameUsed(body.getName().replace("SOLA", planetID + "0"), body)) {
+                        planetID = getAlphaNumericString(3);
+                    }
+                    System.out.println(("Selecting planet name : " + body.getName().replace("SOLA", planetID + "0")).toUpperCase() + " for star: " + body.getName());
+                    return (body.getName().replace("SOLA", planetID + "0")).toUpperCase();            
+                }
+            } catch (Exception e) {
+                    System.out.println("Assigning random name: " + props.getName());
+                    e.printStackTrace();
+                    return getAlphaNumericString(9);
+            }
+	}
+        public boolean isMoonNameUsed(String s, DimensionProperties planet) {
+            for (Integer id : planet.getChildPlanets()) {
+                DimensionProperties child = DimensionManager.getInstance().getDimensionProperties(id);
+                if (child.getName().equals(s)) return true;
+            }
+            return false;
+        }
+        public boolean isPlanetNameUsed(String s, StellarBody body) {
+            for (IDimensionProperties props : body.getPlanets()) {
+                if (props.getName().equals(s)) {
+                    return true;
+                }
+            }
+            return false;
+        }
 	/**
 	 * Called every tick to tick satellites
 	 */
@@ -262,7 +329,7 @@ public class DimensionManager implements IGalaxy {
 			return null;
 
 		if(name == "")
-			properties.setName(getNextName(properties.getId()));
+			properties.setName(getNextName(properties, properties.getStar()));
 		else {
 			properties.setName(name);
 		}
@@ -344,7 +411,7 @@ public class DimensionManager implements IGalaxy {
 		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
 
 		if(name == "")
-			properties.setName(getNextName(properties.getId()));
+			properties.setName(getNextName(properties,properties.getStar()));
 		else {
 			properties.setName(name);
 		}
