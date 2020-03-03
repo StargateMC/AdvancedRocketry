@@ -533,7 +533,7 @@ public class WorldCommand implements ICommand {
 				if(!gassy)
 					properties = DimensionManager.getInstance().generateRandom(starId, cmdstring[2 + gasOffset], Integer.parseInt(cmdstring[3 + gasOffset]), Integer.parseInt(cmdstring[4 + gasOffset]), Integer.parseInt(cmdstring[5 + gasOffset]));
 				else
-					properties = DimensionManager.getInstance().generateRandomGasGiant(starId, cmdstring[2 + gasOffset], Integer.parseInt(cmdstring[3 + gasOffset]), Integer.parseInt(cmdstring[4 + gasOffset]), Integer.parseInt(cmdstring[5 + gasOffset]),1,1,1);
+					properties = DimensionManager.getInstance().generateRandomGasGiant(starId, cmdstring[2 + gasOffset], Integer.parseInt(cmdstring[3 + gasOffset]), Integer.parseInt(cmdstring[4 + gasOffset]), Integer.parseInt(cmdstring[5 + gasOffset]),1,1,1,null);
 
 				if(properties == null)
 					sender.sendMessage(new TextComponentString("Dimension: " + cmdstring[2 + gasOffset] + " failed to generate!"));
@@ -556,9 +556,9 @@ public class WorldCommand implements ICommand {
 				DimensionProperties properties;
 
 				if(!gassy)
-					properties = DimensionManager.getInstance().generateRandom(starId,cmdstring[2 + gasOffset] ,Integer.parseInt(cmdstring[3 + gasOffset]), Integer.parseInt(cmdstring[4 + gasOffset]), Integer.parseInt(cmdstring[5 + gasOffset]),Integer.parseInt(cmdstring[6 + gasOffset]), Integer.parseInt(cmdstring[7 + gasOffset]), Integer.parseInt(cmdstring[8 + gasOffset]));
+					properties = DimensionManager.getInstance().generateRandom(starId,cmdstring[2 + gasOffset] ,Integer.parseInt(cmdstring[3 + gasOffset]), Integer.parseInt(cmdstring[4 + gasOffset]), Integer.parseInt(cmdstring[5 + gasOffset]),Integer.parseInt(cmdstring[6 + gasOffset]), Integer.parseInt(cmdstring[7 + gasOffset]), Integer.parseInt(cmdstring[8 + gasOffset]),null);
 				else
-					properties = DimensionManager.getInstance().generateRandomGasGiant(starId, cmdstring[2 + gasOffset] ,Integer.parseInt(cmdstring[3 + gasOffset]), Integer.parseInt(cmdstring[4 + gasOffset]), Integer.parseInt(cmdstring[5 + gasOffset]),Integer.parseInt(cmdstring[6 + gasOffset]), Integer.parseInt(cmdstring[7 + gasOffset]), Integer.parseInt(cmdstring[8 + gasOffset]));
+					properties = DimensionManager.getInstance().generateRandomGasGiant(starId, cmdstring[2 + gasOffset] ,Integer.parseInt(cmdstring[3 + gasOffset]), Integer.parseInt(cmdstring[4 + gasOffset]), Integer.parseInt(cmdstring[5 + gasOffset]),Integer.parseInt(cmdstring[6 + gasOffset]), Integer.parseInt(cmdstring[7 + gasOffset]), Integer.parseInt(cmdstring[8 + gasOffset]),null);
 
 				if(properties == null)
 					sender.sendMessage(new TextComponentString("Dimension: " + cmdstring[2 + gasOffset] + " failed to generate!"));

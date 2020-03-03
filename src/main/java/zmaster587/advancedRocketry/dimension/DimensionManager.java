@@ -308,7 +308,7 @@ public class DimensionManager implements IGalaxy {
 	}
 
 	public DimensionProperties generateRandom(int starId, String name, int atmosphereFactor, int distanceFactor, int gravityFactor) {
-		return generateRandom(starId, name, 100, 100, 100, atmosphereFactor, distanceFactor, gravityFactor);
+		return generateRandom(starId, name, 100, 100, 100, atmosphereFactor, distanceFactor, gravityFactor,null);
 	}
 
 	/**
@@ -322,17 +322,15 @@ public class DimensionManager implements IGalaxy {
 	 * @param gravityFactor
 	 * @return the new dimension properties created for this planet
 	 */
-	public DimensionProperties generateRandom(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor) {
+	public DimensionProperties generateRandom(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor, DimensionProperties props) {
 		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
-
+                
 		if(properties.getId() == Constants.INVALID_PLANET)
 			return null;
-
-		if(name == "")
-			properties.setName(getNextName(properties, properties.getStar()));
-		else {
-			properties.setName(name);
-		}
+                if (props != null) {
+                    properties.setParentPlanet(props);
+                }
+		properties.setName(getNextName(properties, properties.getStar()));
 		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
 		int newDist = properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
 
@@ -404,17 +402,15 @@ public class DimensionManager implements IGalaxy {
 
 
 	public DimensionProperties generateRandom(int starId, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor) {
-		return generateRandom(starId, "", baseAtmosphere, baseDistance, baseGravity, atmosphereFactor, distanceFactor, gravityFactor);
+		return generateRandom(starId, "", baseAtmosphere, baseDistance, baseGravity, atmosphereFactor, distanceFactor, gravityFactor,null);
 	}
 
-	public DimensionProperties generateRandomGasGiant(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor) {
+	public DimensionProperties generateRandomGasGiant(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor, DimensionProperties props) {
 		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
-
-		if(name == "")
-			properties.setName(getNextName(properties,properties.getStar()));
-		else {
-			properties.setName(name);
-		}
+                if (props != null) {
+                    properties.setParentPlanet(props);
+                }
+		properties.setName(getNextName(properties,properties.getStar()));
 		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
 		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
 		//System.out.println(properties.orbitalDist);
@@ -767,14 +763,14 @@ public class DimensionManager implements IGalaxy {
 			int baseAtm = 180;
 			int baseDistance = 100;
 
-			DimensionProperties	properties = DimensionManager.getInstance().generateRandomGasGiant(star.getId(), "",baseDistance + 50,baseAtm,125,100,100,75);
+			DimensionProperties	properties = DimensionManager.getInstance().generateRandomGasGiant(star.getId(), "",baseDistance + 50,baseAtm,125,100,100,75,null);
 
 			dimPropList.add(properties);
 			if(properties.gravitationalMultiplier >= 1f) {
 				int numMoons = random.nextInt(8);
 
 				for(int ii = 0; ii < numMoons; ii++) {
-					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), properties.getName() + ": " + ii, 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50);
+					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), "", 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50, properties);
 					if(moonProperties == null)
 						continue;
 
@@ -814,7 +810,7 @@ public class DimensionManager implements IGalaxy {
 				int numMoons = random.nextInt(4);
 
 				for(int ii = 0; ii < numMoons; ii++) {
-					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), properties.getName() + ": " + ii, 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50);
+					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), "", 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50,properties);
 
 					if(moonProperties == null)
 						continue;
