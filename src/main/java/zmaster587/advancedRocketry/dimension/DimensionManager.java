@@ -207,11 +207,12 @@ public class DimensionManager implements IGalaxy {
 
             return sb.toString(); 
         } 
-	private String getNextName(DimensionProperties props,StellarBody body) {
+	private String getNextName(DimensionProperties props) {
             String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             // This is a hack to allow singleplayer to function.
             try {
                 if (props.isMoon()) {
+                StellarBody body = props.getParentProperties().getStar();
                 String parentName = props.getParentProperties().getName();
                 String charToReplace = parentName.substring(0,6);
                 String end = parentName.substring(7,9);
@@ -225,6 +226,7 @@ public class DimensionManager implements IGalaxy {
                 }
                     return moonID.toUpperCase();
                 } else {
+                    StellarBody body = props.getStar();
                     String planetID = null;
                     while (planetID == null || isPlanetNameUsed(body.getName().replace("SOLA", planetID + "0"), body)) {
                         planetID = getAlphaNumericString(3);
@@ -334,7 +336,7 @@ public class DimensionManager implements IGalaxy {
                 if (props != null) {
                     properties.setParentPlanet(props);
                 }
-		properties.setName(getNextName(properties, properties.getStar()));
+		properties.setName(getNextName(properties));
 		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
 		int newDist = properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
 
@@ -415,7 +417,7 @@ public class DimensionManager implements IGalaxy {
                     properties.setParentPlanet(props);
                 }
                 properties.setStar(starId);
-		properties.setName(getNextName(properties,properties.getStar()));
+		properties.setName(getNextName(properties));
 		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
 		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
 		//System.out.println(properties.orbitalDist);
