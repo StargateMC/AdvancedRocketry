@@ -767,7 +767,7 @@ public class DimensionManager implements IGalaxy {
 
 			dimPropList.add(properties);
 			if(properties.gravitationalMultiplier >= 1f) {
-				int numMoons = random.nextInt(8);
+				int numMoons = random.nextInt(4);
 
 				for(int ii = 0; ii < numMoons; ii++) {
 					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), "", 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50, properties);
