@@ -213,6 +213,7 @@ public class DimensionManager implements IGalaxy {
             try {
                 if (props.isMoon()) {
                 StellarBody body = props.getParentProperties().getStar();
+                System.out.println("Star is : " +body.getName());
                 String parentName = props.getParentProperties().getName();
                 String charToReplace = parentName.substring(0,6);
                 String end = parentName.substring(7,9);
@@ -228,8 +229,11 @@ public class DimensionManager implements IGalaxy {
                 } else {
                     StellarBody body = props.getStar();
                     String planetID = null;
+                    System.out.println("Star is : " +body.getName());
                     while (planetID == null || isPlanetNameUsed(body.getName().replace("SOLA", planetID + "0"), body)) {
-                        planetID = getAlphaNumericString(3);
+                        String s = getAlphaNumericString(3);
+                        System.out.println("Selecting planet ID: " + s);
+                        planetID = s;
                     }
                     System.out.println(("Selecting planet name : " + body.getName().replace("SOLA", planetID + "0")).toUpperCase() + " for star: " + body.getName());
                     return (body.getName().replace("SOLA", planetID + "0")).toUpperCase();            
@@ -329,12 +333,14 @@ public class DimensionManager implements IGalaxy {
 	 */
 	public DimensionProperties generateRandom(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor, DimensionProperties props) {
 		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
-                
-                properties.setStar(starId);
+                System.out.println("Generating solid planetoid for star: " + starId);
+
 		if(properties.getId() == Constants.INVALID_PLANET)
 			return null;
                 if (props != null) {
                     properties.setParentPlanet(props);
+                } else {
+                    properties.setStar(starId);
                 }
 		properties.setName(getNextName(properties));
 		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
@@ -349,6 +355,7 @@ public class DimensionManager implements IGalaxy {
 			minDistance = Double.MAX_VALUE;
 
 			for(IDimensionProperties properties2 : getStar(starId).getPlanets()) {
+                            if (properties2.equals(this)) continue;
 				int dist = Math.abs(((DimensionProperties)properties2).orbitalDist - newDist);
 				if(minDistance > dist)
 					minDistance = dist;
@@ -412,11 +419,13 @@ public class DimensionManager implements IGalaxy {
 	}
 
 	public DimensionProperties generateRandomGasGiant(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor, DimensionProperties props) {
-		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
+            System.out.println("Generating gas giant for star: " + starId);
+            DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
                 if (props != null) {
                     properties.setParentPlanet(props);
+                } else {
+                    properties.setStar(starId);
                 }
-                properties.setStar(starId);
 		properties.setName(getNextName(properties));
 		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
 		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
@@ -431,6 +440,7 @@ public class DimensionManager implements IGalaxy {
 			properties.orbitTheta  = random.nextInt(360)*(2f*Math.PI)/360f;
 
 			for(IDimensionProperties properties2 : getStar(starId).getPlanets()) {
+                            if (properties2.equals(this)) continue;
 				double dist = Math.abs(((DimensionProperties)properties2).orbitTheta - properties.orbitTheta);
 				if(dist < minDistance)
 					minDistance = dist;
@@ -1111,6 +1121,7 @@ public class DimensionManager implements IGalaxy {
 				for(StellarBody star : dimCouplingList.stars) {
 					int numRandomGeneratedPlanets = loader.getMaxNumPlanets(star);
 					int numRandomGeneratedGasGiants = loader.getMaxNumGasGiants(star);
+                                        System.out.println("Processing star: " + star.getName());
 					generateRandomPlanets(star, numRandomGeneratedPlanets, numRandomGeneratedGasGiants);
 				}
 			}
