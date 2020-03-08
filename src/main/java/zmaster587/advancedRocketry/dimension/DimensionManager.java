@@ -328,6 +328,7 @@ public class DimensionManager implements IGalaxy {
 	public DimensionProperties generateRandom(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor, DimensionProperties props) {
 		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
                 
+                properties.setStar(starId);
 		if(properties.getId() == Constants.INVALID_PLANET)
 			return null;
                 if (props != null) {
@@ -413,6 +414,7 @@ public class DimensionManager implements IGalaxy {
                 if (props != null) {
                     properties.setParentPlanet(props);
                 }
+                properties.setStar(starId);
 		properties.setName(getNextName(properties,properties.getStar()));
 		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
 		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
