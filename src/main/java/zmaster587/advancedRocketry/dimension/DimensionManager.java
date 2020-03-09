@@ -73,6 +73,7 @@ public class DimensionManager implements IGalaxy {
 	//Reference to the worldProvider for any dimension created through this system, normally WorldProviderPlanet, set in AdvancedRocketry.java in preinit
 	public static Class<? extends WorldProvider> planetWorldProvider;
 	private HashMap<Integer,DimensionProperties> dimensionList;
+	private HashMap<String,DimensionProperties> dimensionListByName = new HashMap<String,DimensionProperties>();
 	private HashMap<Integer, StellarBody> starList;
 
 	public static final int GASGIANT_DIMID_OFFSET = 0x100; //Offset by 256
@@ -89,7 +90,9 @@ public class DimensionManager implements IGalaxy {
 	public static StellarBody getSol() {
 		return getInstance().getStar(0);
 	}
-
+        public HashMap<String,DimensionProperties> getNameMap() {
+            return dimensionListByName;
+        }
 	public static DimensionManager getInstance() {
 		return AdvancedRocketry.proxy.getDimensionManager(); //instance;
 	};
@@ -285,6 +288,7 @@ public class DimensionManager implements IGalaxy {
 	 */
 	public void setDimProperties( int dimId, DimensionProperties properties) {
 		dimensionList.put(new Integer(dimId),properties);
+                dimensionListByName.put(properties.getName(), properties);
 	}
 
 	/**
@@ -501,6 +505,7 @@ public class DimensionManager implements IGalaxy {
 				net.minecraftforge.common.DimensionManager.registerDimension(dimId, PlanetDimensionType);
 		}
 		dimensionList.put(dimId, properties);
+                dimensionListByName.put(properties.getName(), properties);
 
 		return true;
 	}
@@ -516,6 +521,7 @@ public class DimensionManager implements IGalaxy {
 		}
 		dimensionList.clear();
 		starList.clear();
+                dimensionListByName.clear();
 	}
 
 	/**
