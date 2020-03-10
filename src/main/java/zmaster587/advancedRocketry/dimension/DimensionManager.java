@@ -212,6 +212,7 @@ public class DimensionManager implements IGalaxy {
         } 
 	private String getNextName(DimensionProperties props, int starId) {
             String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            String numbers = "123456789";
             // This is a hack to allow singleplayer to function.
             try {
                 if (props.isMoon()) {
@@ -221,7 +222,7 @@ public class DimensionManager implements IGalaxy {
                 String charToReplace = parentName.substring(0,6);
                 String end = parentName.substring(7,9);
                 String moonID = null;
-                for (char ch: alphabet.toCharArray()) {
+                for (char ch: numbers.toCharArray()) {
                     moonID = charToReplace + ch + end;
                     if (!isMoonNameUsed(moonID, props.getParentProperties())) {
                         System.out.println(("Selecting moon name: " + moonID + " for : " + body));
@@ -233,13 +234,13 @@ public class DimensionManager implements IGalaxy {
                     StellarBody body = getStar(starId);
                     String planetID = null;
                     System.out.println("Star is : " +body.getName());
-                    while (planetID == null || isPlanetNameUsed(body.getName().replace("SOLA", planetID + "0"), body)) {
-                        String s = getAlphaNumericString(3);
+                    while (planetID == null || isPlanetNameUsed(body.getName().replace("SOL", planetID + "0"), body)) {
+                        String s = getAlphaNumericString(2);
                         System.out.println("Selecting planet ID: " + s);
                         planetID = s;
                     }
-                    System.out.println(("Selecting planet name : " + body.getName().replace("SOLA", planetID + "0")).toUpperCase() + " for star: " + body.getName());
-                    return (body.getName().replace("SOLA", planetID + "0")).toUpperCase();            
+                    System.out.println(("Selecting planet name : " + body.getName().replace("SOL", planetID + "0")).toUpperCase() + " for star: " + body.getName());
+                    return (body.getName().replace("SOL", planetID + "0")).toUpperCase();            
                 }
             } catch (Exception e) {
                     System.out.println("Assigning random name: " + props.getName());
