@@ -74,6 +74,9 @@ public class DimensionManager implements IGalaxy {
 	public static Class<? extends WorldProvider> planetWorldProvider;
 	private HashMap<Integer,DimensionProperties> dimensionList;
 	private HashMap<String,DimensionProperties> dimensionListByName = new HashMap<String,DimensionProperties>();
+	private HashMap<String,ArrayList<DimensionProperties>> dimensionListByGalaxy = new HashMap<String,ArrayList<DimensionProperties>>();
+	private HashMap<String,ArrayList<DimensionProperties>> dimensionListBySystem = new HashMap<String,ArrayList<DimensionProperties>>();
+        
 	private HashMap<Integer, StellarBody> starList;
 
 	public static final int GASGIANT_DIMID_OFFSET = 0x100; //Offset by 256
@@ -93,6 +96,14 @@ public class DimensionManager implements IGalaxy {
         public HashMap<String,DimensionProperties> getNameMap() {
             return dimensionListByName;
         }
+        public ArrayList<DimensionProperties> getDimensionsForSystem(String system, String galaxy) {
+            return dimensionListBySystem.get(system+galaxy);
+        }
+        
+        public ArrayList<DimensionProperties> getDimensionsForGalaxy(String galaxy) {
+            return dimensionListByGalaxy.get(galaxy);
+        }
+        
 	public static DimensionManager getInstance() {
 		return AdvancedRocketry.proxy.getDimensionManager(); //instance;
 	};
@@ -290,6 +301,32 @@ public class DimensionManager implements IGalaxy {
 	public void setDimProperties( int dimId, DimensionProperties properties) {
 		dimensionList.put(new Integer(dimId),properties);
                 dimensionListByName.put(properties.getName(), properties);
+                ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
+                boolean existed = false;
+                if (dimensionListByGalaxy.containsKey(properties.getName().substring(7,9))) {
+                    props = dimensionListByGalaxy.get(properties.getName().substring(7,9));
+                    existed = true;
+                }
+                if (!props.contains(properties)) props.add(properties);
+                System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
+                if (existed) {
+                    dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
+                } else {
+                    dimensionListByGalaxy.put(properties.getName().substring(7,9), props);
+                }
+                props = new ArrayList<DimensionProperties>();
+                existed = false;
+                if (dimensionListBySystem.containsKey(properties.getName().substring(0,5) + properties.getName().substring(7,9))) {
+                    props = dimensionListBySystem.get(properties.getName().substring(0,5) + properties.getName().substring(7,9));
+                    existed = true;
+                }
+                if (!props.contains(properties)) props.add(properties);
+                System.out.println("Adding: " + properties.getName() + " to system: " + properties.getName().substring(0,5) + properties.getName().substring(7,9));
+                if (existed) {
+                    dimensionListBySystem.replace(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
+                } else {
+                    dimensionListBySystem.put(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
+                }
 	}
 
 	/**
@@ -507,7 +544,32 @@ public class DimensionManager implements IGalaxy {
 		}
 		dimensionList.put(dimId, properties);
                 dimensionListByName.put(properties.getName(), properties);
-
+                ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
+                boolean existed = false;
+                if (dimensionListByGalaxy.containsKey(properties.getName().substring(7,9))) {
+                    props = dimensionListByGalaxy.get(properties.getName().substring(7,9));
+                    existed = true;
+                }
+                if (!props.contains(properties)) props.add(properties);
+                System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
+                if (existed) {
+                    dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
+                } else {
+                    dimensionListByGalaxy.put(properties.getName().substring(7,9), props);
+                }
+                props = new ArrayList<DimensionProperties>();
+                existed = false;
+                if (dimensionListBySystem.containsKey(properties.getName().substring(0,5) + properties.getName().substring(7,9))) {
+                    props = dimensionListBySystem.get(properties.getName().substring(0,5) + properties.getName().substring(7,9));
+                    existed = true;
+                }
+                if (!props.contains(properties)) props.add(properties);
+                System.out.println("Adding: " + properties.getName() + " to system: " + properties.getName().substring(0,5) + properties.getName().substring(7,9));
+                if (existed) {
+                    dimensionListBySystem.replace(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
+                } else {
+                    dimensionListBySystem.put(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
+                }
 		return true;
 	}
 
@@ -523,6 +585,8 @@ public class DimensionManager implements IGalaxy {
 		dimensionList.clear();
 		starList.clear();
                 dimensionListByName.clear();
+                dimensionListByGalaxy.clear();
+                dimensionListBySystem.clear();
 	}
 
 	/**
