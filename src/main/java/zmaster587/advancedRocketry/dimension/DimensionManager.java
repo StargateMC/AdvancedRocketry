@@ -551,7 +551,7 @@ public class DimensionManager implements IGalaxy {
                     existed = true;
                 }
                 if (!props.contains(properties)) props.add(properties);
-                System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
+                //System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
                 if (existed) {
                     dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
                 } else {
@@ -564,7 +564,7 @@ public class DimensionManager implements IGalaxy {
                     existed = true;
                 }
                 if (!props.contains(properties)) props.add(properties);
-                System.out.println("Adding: " + properties.getName() + " to system: " + properties.getName().substring(0,5) + properties.getName().substring(7,9));
+                //System.out.println("Adding: " + properties.getName() + " to system: " + properties.getName().substring(0,5) + properties.getName().substring(7,9));
                 if (existed) {
                     dimensionListBySystem.replace(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
                 } else {

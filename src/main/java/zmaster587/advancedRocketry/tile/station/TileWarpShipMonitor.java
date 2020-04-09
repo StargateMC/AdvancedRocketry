@@ -900,7 +900,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
             int cost = 2000;
             if (isInSystem(props)) cost = 50;
             if (!isInSystem(props) && isInGalaxy(props)) cost = 200;
-            if (!isInSystem(props) && !isInGalaxy(props)) cost = 450;
+            if (!isInSystem(props) && !isInGalaxy(props)) cost = 1200;
             return cost;   
         }
         
