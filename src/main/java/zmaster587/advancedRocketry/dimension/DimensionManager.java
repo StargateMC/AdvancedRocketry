@@ -546,30 +546,34 @@ public class DimensionManager implements IGalaxy {
                 dimensionListByName.put(properties.getName(), properties);
                 ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
                 boolean existed = false;
-                if (dimensionListByGalaxy.containsKey(properties.getName().substring(7,9))) {
-                    props = dimensionListByGalaxy.get(properties.getName().substring(7,9));
-                    existed = true;
-                }
-                if (!props.contains(properties)) props.add(properties);
-                //System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
-                if (existed) {
-                    dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
-                } else {
-                    dimensionListByGalaxy.put(properties.getName().substring(7,9), props);
-                }
-                props = new ArrayList<DimensionProperties>();
-                existed = false;
-                if (dimensionListBySystem.containsKey(properties.getName().substring(0,5) + properties.getName().substring(7,9))) {
-                    props = dimensionListBySystem.get(properties.getName().substring(0,5) + properties.getName().substring(7,9));
-                    existed = true;
+                try {
+                    if (dimensionListByGalaxy.containsKey(properties.getName().substring(7,9))) {
+                        props = dimensionListByGalaxy.get(properties.getName().substring(7,9));
+                        existed = true;
+                    }
+                    if (!props.contains(properties)) props.add(properties);
+                    //System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
+                    if (existed) {
+                        dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
+                    } else {
+                        dimensionListByGalaxy.put(properties.getName().substring(7,9), props);
+                    }
+                    props = new ArrayList<DimensionProperties>();
+                    existed = false;
+                    if (dimensionListBySystem.containsKey(properties.getName().substring(0,5) + properties.getName().substring(7,9))) {
+                        props = dimensionListBySystem.get(properties.getName().substring(0,5) + properties.getName().substring(7,9));
+                        existed = true;
+                    }
+                    if (existed) {
+                        dimensionListBySystem.replace(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
+                    } else {
+                        dimensionListBySystem.put(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Unable to process galaxy/system identifier for : " + properties.getName());
                 }
                 if (!props.contains(properties)) props.add(properties);
                 //System.out.println("Adding: " + properties.getName() + " to system: " + properties.getName().substring(0,5) + properties.getName().substring(7,9));
-                if (existed) {
-                    dimensionListBySystem.replace(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
-                } else {
-                    dimensionListBySystem.put(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
-                }
 		return true;
 	}
 
