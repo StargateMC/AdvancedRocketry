@@ -404,7 +404,16 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	 * @return the color of the sun as an array of floats represented as  {r,g,b}
 	 */
 	public float[] getSunColor() {
-		return getStar().getColor();
+		try {
+                    return getStar().getColor();
+                } catch (Exception e) {
+                    float[] array = new float[2];
+                    array[0] = 0;
+                    array[1] = 0;
+                    array[2] = 0;
+                    System.out.println("Error grabbing sun color for : " + this.getName() + ", defaulting to 0!");
+                    return array;
+                }
 	}
 
 	/**
