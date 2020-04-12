@@ -443,6 +443,18 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 			star = DimensionManager.getInstance().getStar(starId);
 		return star;
 	}
+        
+        public boolean hasBlackHole() {
+            if (getStar() == null) return false;
+            if (getStar().isBlackHole()) return true;
+            if (getStar().getSubStars() != null && !getStar().getSubStars().isEmpty()) {
+                for (StellarBody body : getStar().getSubStars()) {
+                    if (body == null) continue;
+                    if (body.isBlackHole()) return true;
+                }
+            }
+            return false;
+        }
 
 	public boolean hasSurface() {
 		return !(isGasGiant() || isStar());

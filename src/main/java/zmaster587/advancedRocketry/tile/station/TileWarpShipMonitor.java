@@ -122,7 +122,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
             double distance = 0.0;
             if (props1 != null && props2 != null) {
                 distance += distanceBetweenDimProps(props1,props2); // Distance relative to star from eachother.
-                distance += distanceBetweenStars(props1.getStar(), props2.getStar()); // Interstellar.
+                distance += (distanceBetweenStars(props1.getStar(), props2.getStar())); // Interstellar.
             }
             return distance;
         }
@@ -132,7 +132,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			DimensionProperties properties = getSpaceObject().getProperties().getParentProperties();
 
 			DimensionProperties destProperties = DimensionManager.getInstance().getDimensionProperties(getSpaceObject().getDestOrbitingBody());
-                        return (int)TileWarpShipMonitor.distanceBetweenDimProps(properties, destProperties);
+                        return (int)TileWarpShipMonitor.distanceBetweenDimensions(properties.getId(), destProperties.getId());
 		}
 		return Integer.MAX_VALUE;
 	}
