@@ -121,8 +121,8 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
             DimensionProperties props2 = zmaster587.advancedRocketry.dimension.DimensionManager.getEffectiveDimId(dim2, new BlockPos(0,0,0));
             double distance = 0.0;
             if (props1 != null && props2 != null) {
-                distance += distanceBetweenDimProps(props1,props2) / 10; // Distance relative to star from eachother.
-                distance += (distanceBetweenStars(props1.getStar(), props2.getStar())); // Interstellar.
+                if (props1 != props2) distance += distanceBetweenDimProps(props1,props2) / 10; // Distance relative to star from eachother.
+                if (props1.getStar() != props2.getStar()) distance += (distanceBetweenStars(props1.getStar(), props2.getStar())); // Interstellar.
             }
             return distance;
         }
