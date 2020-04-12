@@ -47,8 +47,12 @@ import zmaster587.libVulpes.util.HashedBlockPosition;
 import zmaster587.libVulpes.util.VulpineMath;
 import zmaster587.libVulpes.util.ZUtils;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import java.util.*;
 import java.util.Map.Entry;
+import zmaster587.advancedRocketry.tile.station.TileWarpShipMonitor;
 
 public class DimensionProperties implements Cloneable, IDimensionProperties {
 
@@ -160,6 +164,16 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	public static final ResourceLocation shadow = new ResourceLocation("advancedrocketry:textures/planets/shadow.png");
 	public static final ResourceLocation shadow3 = new ResourceLocation("advancedrocketry:textures/planets/shadow3.png");
 
+        
+        public double stellarDistanceFrom(World w, BlockPos pos) {
+            DimensionProperties distanceFrom = DimensionManager.getEffectiveDimId(w, pos);
+            if (distanceFrom != null) {
+                return TileWarpShipMonitor.distanceBetweenStars(this.getStar(), distanceFrom.getStar());
+            } else {
+                return Double.MAX_VALUE;
+            }
+        }
+        
 	public static enum PlanetIcons {
 		EARTHLIKE(new ResourceLocation("advancedrocketry:textures/planets/Earthlike.png")),
 		LAVA(new ResourceLocation("advancedrocketry:textures/planets/Lava.png")),

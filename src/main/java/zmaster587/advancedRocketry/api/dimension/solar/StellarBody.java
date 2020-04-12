@@ -3,6 +3,8 @@ package zmaster587.advancedRocketry.api.dimension.solar;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.util.SpacePosition;
@@ -11,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.tile.station.TileWarpShipMonitor;
 
 public class StellarBody {
 
@@ -76,6 +81,15 @@ public class StellarBody {
 	public void setPosX(int x) {
 		posX = (short)x;
 	}
+        
+        public double stellarDistanceFrom(World w, BlockPos pos) {
+            DimensionProperties distanceFrom = DimensionManager.getEffectiveDimId(w, pos);
+            if (distanceFrom != null) {
+                return TileWarpShipMonitor.distanceBetweenStars(this, distanceFrom.getStar());
+            } else {
+                return Double.MAX_VALUE;
+            }
+        }
 
 	public void setPosZ(int x) {
 		posZ = (short)x;
