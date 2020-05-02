@@ -421,7 +421,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		try {
                     return getStar().getColor();
                 } catch (Exception e) {
-                    float[] array = new float[2];
+                    float[] array = new float[3];
                     array[0] = 0;
                     array[1] = 0;
                     array[2] = 0;
