@@ -814,23 +814,27 @@ public class RenderPlanetarySky extends IRenderHandler {
 	{
 		drawStar(buffer, sun, properties, solarOrbitalDistance, sunSize, sunColor, multiplier);
 
-		List<StellarBody> subStars = sun.getSubStars();
-		
-		if(subStars != null && !subStars.isEmpty()) {
-			GL11.glPushMatrix();
-			float phaseInc = 360/subStars.size();
+		try {
+                    List<StellarBody> subStars = sun.getSubStars();
 
-			for(StellarBody subStar : subStars) {
-				GL11.glRotatef(phaseInc, 0, 1, 0);
-				GL11.glPushMatrix();
+                    if(subStars != null && !subStars.isEmpty()) {
+                            GL11.glPushMatrix();
+                            float phaseInc = 360/subStars.size();
 
-				GL11.glRotatef(subStar.getStarSeparation()*(202-solarOrbitalDistance)/100f, 1, 0, 0);
-				float color[] = subStar.getColor();
-				drawStar(buffer, subStar , properties, solarOrbitalDistance, subStar.getSize(), new Vec3d(color[0], color[1], color[2]), multiplier);
-				GL11.glPopMatrix();
-			}
-			GL11.glPopMatrix();
-		}
+                            for(StellarBody subStar : subStars) {
+                                    GL11.glRotatef(phaseInc, 0, 1, 0);
+                                    GL11.glPushMatrix();
+
+                                    GL11.glRotatef(subStar.getStarSeparation()*(202-solarOrbitalDistance)/100f, 1, 0, 0);
+                                    float color[] = subStar.getColor();
+                                    drawStar(buffer, subStar , properties, solarOrbitalDistance, subStar.getSize(), new Vec3d(color[0], color[1], color[2]), multiplier);
+                                    GL11.glPopMatrix();
+                            }
+                            GL11.glPopMatrix();
+                    }
+                } catch (Exception e) {
+                    // Silently fail the render.
+                }
 	}
 
 	protected void drawStar(BufferBuilder buffer, StellarBody sun, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3d sunColor, float multiplier) {
