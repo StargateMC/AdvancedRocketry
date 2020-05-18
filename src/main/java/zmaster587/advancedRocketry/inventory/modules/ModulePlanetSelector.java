@@ -49,7 +49,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		}
 	}
 
-	private static final int size = 2000;
+	private static final int size = 10000;
 	private int topLevel;
 	ISelectionNotify hostTile;
 	private int currentSystem, selectedSystem;

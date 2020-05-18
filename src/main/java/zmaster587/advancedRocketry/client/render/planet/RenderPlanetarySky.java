@@ -814,7 +814,6 @@ public class RenderPlanetarySky extends IRenderHandler {
 	{
 		drawStar(buffer, sun, properties, solarOrbitalDistance, sunSize, sunColor, multiplier);
 
-		try {
                     List<StellarBody> subStars = sun.getSubStars();
 
                     if(subStars != null && !subStars.isEmpty()) {
@@ -831,10 +830,7 @@ public class RenderPlanetarySky extends IRenderHandler {
                                     GL11.glPopMatrix();
                             }
                             GL11.glPopMatrix();
-                    }
-                } catch (Exception e) {
-                    // Silently fail the render.
-                }
+                    }}
 	}
 
 	protected void drawStar(BufferBuilder buffer, StellarBody sun, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3d sunColor, float multiplier) {
