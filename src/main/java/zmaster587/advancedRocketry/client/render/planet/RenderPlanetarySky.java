@@ -830,7 +830,7 @@ public class RenderPlanetarySky extends IRenderHandler {
                                     GL11.glPopMatrix();
                             }
                             GL11.glPopMatrix();
-                    }}
+                    }
 	}
 
 	protected void drawStar(BufferBuilder buffer, StellarBody sun, DimensionProperties properties, int solarOrbitalDistance, float sunSize, Vec3d sunColor, float multiplier) {
