@@ -3,6 +3,8 @@ package zmaster587.advancedRocketry.api.dimension.solar;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 import zmaster587.advancedRocketry.util.SpacePosition;
@@ -11,6 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import zmaster587.advancedRocketry.dimension.DimensionManager;
+import zmaster587.advancedRocketry.dimension.DimensionProperties;
+import zmaster587.advancedRocketry.tile.station.TileWarpShipMonitor;
 
 public class StellarBody {
 
@@ -26,7 +31,6 @@ public class StellarBody {
 	public List<StellarBody> subStars;
 	float starSeperation;
 	private boolean isBlackHole;
-	StellarBody parentStar;
 
 	public StellarBody() {
 		planets = new HashMap<Integer,IDimensionProperties>();
@@ -41,11 +45,8 @@ public class StellarBody {
 	}
 
 	public void addSubStar(StellarBody star) {
-		if(star.name == null)
-			star.setName(name + "-" + String.valueOf(subStars.size()+1));
-		star.setId(this.id);
+		star.setName(name);
 		subStars.add(star);
-		star.parentStar = this;
 	}
 	
 	public boolean isBlackHole() {
@@ -80,6 +81,15 @@ public class StellarBody {
 	public void setPosX(int x) {
 		posX = (short)x;
 	}
+        
+        public double stellarDistanceFrom(World w, BlockPos pos) {
+            DimensionProperties distanceFrom = DimensionManager.getEffectiveDimId(w, pos);
+            if (distanceFrom != null) {
+                return TileWarpShipMonitor.distanceBetweenStars(this, distanceFrom.getStar());
+            } else {
+                return Double.MAX_VALUE;
+            }
+        }
 
 	public void setPosZ(int x) {
 		posZ = (short)x;
@@ -123,8 +133,6 @@ public class StellarBody {
 	 * @return the number of planets orbiting this star
 	 */
 	public int getNumPlanets() {
-		if(parentStar != null)
-			return parentStar.getNumPlanets();
 		return numPlanets;
 	}
 
@@ -268,7 +276,6 @@ public class StellarBody {
 				StellarBody star = new StellarBody();
 				star.readFromNBT(list.getCompoundTagAt(i));
 				subStars.add(star);
-				star.parentStar = this;
 			}
 		}
 	}

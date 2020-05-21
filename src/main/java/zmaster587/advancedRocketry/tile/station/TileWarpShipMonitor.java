@@ -2,12 +2,14 @@ package zmaster587.advancedRocketry.tile.station;
 
 import com.google.common.base.Predicate;
 import io.netty.buffer.ByteBuf;
+import java.util.ArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import java.util.Random;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -43,6 +45,7 @@ import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
 import zmaster587.libVulpes.util.EmbeddedInventory;
 import zmaster587.libVulpes.util.HashedBlockPosition;
+import net.minecraft.util.math.BlockPos;
 import zmaster587.libVulpes.util.INetworkMachine;
 
 import java.util.Iterator;
@@ -87,40 +90,49 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		}
 		return station;
 	}
-
-
+        public static double distance(BlockPos pos1, BlockPos pos2) {
+            return distance(pos1.getX(),pos1.getY(),pos2.getZ(),pos2.getX(),pos2.getY(),pos2.getZ());
+        }
+        public static double distanceBetweenDimProps(DimensionProperties props1, DimensionProperties props2) {
+            double x1 = props1.orbitalDist*Math.cos((float) props1.orbitTheta);
+            double y1 = props1.orbitalDist*Math.sin((float) props1.orbitTheta);
+            double x2 = props2.orbitalDist*Math.cos((float) props2.orbitTheta);
+            double y2 = props2.orbitalDist*Math.sin((float) props2.orbitTheta);
+            return Math.max((int)Math.sqrt(Math.pow((x1 - x2),2) + Math.pow((y1 - y2),2)),1);
+        }
+        public static double distance(double sx, double sy, double sz, double dx, double dy, double dz) {
+            double diffx = 0.0;
+            if (sx >= dx) diffx = sx - dx;
+            if (dx > sx) diffx = dx - sx;
+            double diffy = 0.0;
+            if (sy >= dy) diffy = sy - dy;
+            if (dy > sy) diffy = dy - sy;
+            double diffz = 0.0;
+            if (sz >= dz) diffz = sz - dz;
+            if (dz > sz) diffz = dz - sz;
+            double distance = Math.sqrt(Math.pow(diffx,2) + Math.pow(diffy,2) + Math.pow(diffz,2));
+            return distance;
+        }
+        public static double distanceBetweenStars(StellarBody body1, StellarBody body2) {
+            return distance(new BlockPos(body1.getPosX(), 0, body1.getPosZ()), new BlockPos(body2.getPosX(), 0, body2.getPosZ()));
+        }
+        public static double distanceBetweenDimensions(int dim1, int dim2) {
+            DimensionProperties props1 = zmaster587.advancedRocketry.dimension.DimensionManager.getEffectiveDimId(dim1, new BlockPos(0,0,0));
+            DimensionProperties props2 = zmaster587.advancedRocketry.dimension.DimensionManager.getEffectiveDimId(dim2, new BlockPos(0,0,0));
+            double distance = 0.0;
+            if (props1 != null && props2 != null) {
+                if (props1 != props2) distance += (0.005 * distanceBetweenDimProps(props1,props2)); // Distance relative to star from eachother.
+                if (props1.getStar() != props2.getStar()) distance += (distanceBetweenStars(props1.getStar(), props2.getStar())); // Interstellar.
+            }
+            return distance;
+        }
+        
 	protected int getTravelCost() {
 		if(getSpaceObject() != null) {
 			DimensionProperties properties = getSpaceObject().getProperties().getParentProperties();
 
 			DimensionProperties destProperties = DimensionManager.getInstance().getDimensionProperties(getSpaceObject().getDestOrbitingBody());
-
-			if(properties == DimensionManager.defaultSpaceDimensionProperties)
-				return Integer.MAX_VALUE;
-
-			if(destProperties.getStar() != properties.getStar())
-				return 500;
-
-			while(destProperties.getParentProperties() != null && destProperties.isMoon())
-				destProperties = destProperties.getParentProperties();
-
-			if((destProperties.isMoon() && destProperties.getParentPlanet() == properties.getId()) || (properties.isMoon() && properties.getParentPlanet() == destProperties.getId()))
-				return 1;
-
-			while(properties.isMoon())
-				properties = properties.getParentProperties();
-
-			//TODO: actual trig
-			if(properties.getStar().getId() == destProperties.getStar().getId()) {
-				double x1 = properties.orbitalDist*MathHelper.cos((float) properties.orbitTheta);
-				double y1 = properties.orbitalDist*MathHelper.sin((float) properties.orbitTheta);
-				double x2 = destProperties.orbitalDist*MathHelper.cos((float) destProperties.orbitTheta);
-				double y2 = destProperties.orbitalDist*MathHelper.sin((float) destProperties.orbitTheta);
-
-				return Math.max((int)Math.sqrt(Math.pow((x1 - x2),2) + Math.pow((y1 - y2),2)),1);
-
-				//return Math.abs(properties.orbitalDist - destProperties.orbitalDist);
-			}
+                        return (int)TileWarpShipMonitor.distanceBetweenDimensions(properties.getId(), destProperties.getId());
 		}
 		return Integer.MAX_VALUE;
 	}
@@ -851,35 +863,88 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		return list.isEmpty();
 	}
 	
+        public DimensionProperties getDimensionProps() {
+            try {
+                DimensionProperties props = DimensionManager.getEffectiveDimId(this.world, this.getPos());
+                if (props == null || props.equals(DimensionManager.defaultSpaceDimensionProperties)) return null;
+                return props;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        
+        public ArrayList<DimensionProperties> getDimensionsInGalaxy() {
+            if (getDimensionProps() == null) new ArrayList<DimensionProperties>();
+            return DimensionManager.getInstance().getDimensionsForGalaxy((getDimensionProps().getName().substring(7,9)));   
+        }
+        
+        public ArrayList<DimensionProperties> getDimensionsInSystem() {
+            if (getDimensionProps() == null) new ArrayList<DimensionProperties>();
+            return DimensionManager.getInstance().getDimensionsForSystem(getDimensionProps().getName().substring(0,5),getDimensionProps().getName().substring(7,9));   
+        }
+        
+        public boolean isInSystem(DimensionProperties props) {
+            return (getDimensionsInSystem().contains(props));
+        }
+        public boolean isInGalaxy(DimensionProperties props) {
+            return (getDimensionsInGalaxy().contains(props));
+        }
+        
+        public int getDataAmount() {
+            if (data == null) return 0;
+            int amount = Math.min(data.getDataAmount(DataType.MASS), data.getDataAmount(DataType.COMPOSITION));
+            return Math.min(data.getDataAmount(DataType.DISTANCE), amount);
+        }
+        
+        public int getDimCost(DimensionProperties props) {
+            int cost = 2000;
+            if (isInSystem(props)) cost = 50;
+            if (!isInSystem(props) && isInGalaxy(props)) cost = 200;
+            if (!isInSystem(props) && !isInGalaxy(props)) cost = 1200;
+            return cost;   
+        }
+        
 	@Override
 	public void update() {
 		if(!world.isRemote && progress != -1) {
 			progress++;
+                        int cost = 50;
 			if(progress >= MAX_PROGRESS) {
 				//Do the thing
+                                Random r = new Random(); 
 				SpaceStationObject obj = getSpaceObject();
 				if(Math.abs(world.rand.nextInt()) % ARConfiguration.getCurrentConfig().planetDiscoveryChance == 0 && obj != null) {
 					ItemStack stack = getStackInSlot(PLANETSLOT);
 					if(stack != null && stack.getItem() instanceof ItemPlanetIdentificationChip) {
 						ItemPlanetIdentificationChip item = (ItemPlanetIdentificationChip)stack.getItem();
 						List<Integer> unknownPlanets = new LinkedList<Integer>();
-						
 						//Check to see if any planets with artifacts can be discovered
-						for(int id : DimensionManager.getInstance().getLoadedDimensions()) {
+						for(int id : DimensionManager.getInstance().getRegisteredDimensions()) {
 							DimensionProperties props = DimensionManager.getInstance().getDimensionProperties(id);
 							if(!isPlanetKnown(props) && !props.getRequiredArtifacts().isEmpty()) {
 								//If all artifacts are met, then add
-								if(meetsArtifactReq(props))
-									unknownPlanets.add(id);
+								if(meetsArtifactReq(props)) {
+                                                                        if (isInSystem(props) && r.nextFloat() < 0.6) continue; // 40% chance
+                                                                        if (!isInSystem(props) && isInGalaxy(props) && r.nextFloat() < 0.8) continue; // 20% chance
+                                                                        if (!isInSystem(props) && !isInGalaxy(props) && r.nextFloat() == 1.0) continue; // 10% chance
+                                                                        if (getDimCost(props)+cost <= getDataAmount()) {
+                                                                            unknownPlanets.add(id);
+                                                                        }
+                                                                }
 							}
 						}
 
 						//if there are not any planets requiring artifacts then get the regular planets
 						if(unknownPlanets.isEmpty()) {
-							for(int id : DimensionManager.getInstance().getLoadedDimensions()) {
+							for(int id : DimensionManager.getInstance().getRegisteredDimensions()) {
 								DimensionProperties props = DimensionManager.getInstance().getDimensionProperties(id);
 								if(!isPlanetKnown(props) && props.getRequiredArtifacts().isEmpty()) {
-									unknownPlanets.add(id);
+                                                                        if (isInSystem(props) && r.nextFloat() < 0.6) continue; // 40% chance
+                                                                        if (!isInSystem(props) && isInGalaxy(props) && r.nextFloat() < 0.8) continue; // 20% chance
+                                                                        if (!isInSystem(props) && !isInGalaxy(props) && r.nextInt(100) == 50) continue; // 1% chance
+                                                                        if (getDimCost(props)+cost <= getDataAmount()) {
+                                                                            unknownPlanets.add(id);
+                                                                        }
 								}
 							}
 						}
@@ -888,14 +953,20 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 							int newId = (int)(world.rand.nextFloat()*unknownPlanets.size());
 							newId = unknownPlanets.get(newId);
 							item.setDimensionId(stack, newId);
-							obj.discoverPlanet(newId);
+                                                        DimensionProperties found = DimensionManager.getInstance().getDimensionProperties(newId);
+                                                        if (found == null) {
+                                                            System.out.println("Found dimension: " + newId + ", but its not valid!");
+                                                        } else {
+                                                            cost += getDimCost(found);
+                                                            obj.discoverPlanet(newId);
+                                                            System.out.println("Found dimension: " + found.getName() + ", cost: " + cost);
+                                                        }
 						}
 					}
 				}
-				data.extractData(100, DataType.COMPOSITION, EnumFacing.UP, true);
-				data.extractData(100, DataType.DISTANCE, EnumFacing.UP, true);
-				data.extractData(100, DataType.MASS, EnumFacing.UP, true);
-
+				data.extractData(cost, DataType.COMPOSITION, EnumFacing.UP, true);
+				data.extractData(cost, DataType.DISTANCE, EnumFacing.UP, true);
+				data.extractData(cost, DataType.MASS, EnumFacing.UP, true);
 				progress = -1;
 			}
 		}

@@ -261,7 +261,9 @@ public class ItemSpaceArmor extends ItemArmor implements ISpecialArmor, ICapabil
 
 	@Override
 	public boolean protectsFromSubstance(IAtmosphere atmosphere, ItemStack stack, boolean commitProtection) {
-		return (atmosphere == AtmosphereType.SUPERHIGHPRESSURE || atmosphere == AtmosphereType.HIGHPRESSURE || atmosphere == AtmosphereType.VACUUM || atmosphere == AtmosphereType.VERYHOT || atmosphere == AtmosphereType.LOWOXYGEN);
+		return (atmosphere == AtmosphereType.HIGHPRESSURE || atmosphere == AtmosphereType.VACUUM || atmosphere == AtmosphereType.VERYHOT || atmosphere == AtmosphereType.LOWOXYGEN) && (this != AdvancedRocketryItems.itemSpaceSuit_Chest || (this == AdvancedRocketryItems.itemSpaceSuit_Chest && 
+
+				(commitProtection && ((IFillableArmor)AdvancedRocketryItems.itemSpaceSuit_Chest).decrementAir(stack, 1) > 0)) || (!commitProtection && ((IFillableArmor)AdvancedRocketryItems.itemSpaceSuit_Chest).getAirRemaining(stack) > 0));
 	}
 
 	@Override

@@ -37,7 +37,6 @@ import zmaster587.advancedRocketry.inventory.TextureResources;
 import zmaster587.advancedRocketry.network.PacketDimInfo;
 import zmaster587.advancedRocketry.network.PacketSatellite;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
-import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.advancedRocketry.util.OreGenProperties;
 import zmaster587.advancedRocketry.util.SpacePosition;
 import zmaster587.advancedRocketry.util.SpawnListEntryNBT;
@@ -48,22 +47,25 @@ import zmaster587.libVulpes.util.HashedBlockPosition;
 import zmaster587.libVulpes.util.VulpineMath;
 import zmaster587.libVulpes.util.ZUtils;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import java.util.*;
 import java.util.Map.Entry;
+import zmaster587.advancedRocketry.tile.station.TileWarpShipMonitor;
 
 public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 	/**
-	 * Temperatures are stored in Kelvin
-	 * This facilitates precise temperature calculations and specifications
-	 * 286 is Earthlike (13 C), Hot is 52 C, Cold is -23 C. Snowball is absolute zero
+	 * Contains standardized temperature ranges for planets
+	 * where 100 is earthlike, larger values are hotter
 	 */
 	public static enum Temps {
-		TOOHOT(450),
-		HOT(325),
-		NORMAL(275),
-		COLD(250),
-		FRIGID(175),
+		TOOHOT(150),
+		HOT(125),
+		NORMAL(75),
+		COLD(50),
+		FRIGID(25),
 		SNOWBALL(0);
 
 		private int temp;
@@ -162,6 +164,16 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	public static final ResourceLocation shadow = new ResourceLocation("advancedrocketry:textures/planets/shadow.png");
 	public static final ResourceLocation shadow3 = new ResourceLocation("advancedrocketry:textures/planets/shadow3.png");
 
+        
+        public double stellarDistanceFrom(World w, BlockPos pos) {
+            DimensionProperties distanceFrom = DimensionManager.getEffectiveDimId(w, pos);
+            if (distanceFrom != null) {
+                return TileWarpShipMonitor.distanceBetweenStars(this.getStar(), distanceFrom.getStar());
+            } else {
+                return Double.MAX_VALUE;
+            }
+        }
+        
 	public static enum PlanetIcons {
 		EARTHLIKE(new ResourceLocation("advancedrocketry:textures/planets/Earthlike.png")),
 		LAVA(new ResourceLocation("advancedrocketry:textures/planets/Lava.png")),
@@ -169,12 +181,8 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		MOON(new ResourceLocation("advancedrocketry:textures/planets/moon.png")),
 		WATERWORLD(new ResourceLocation("advancedrocketry:textures/planets/WaterWorld.png")),
 		ICEWORLD(new ResourceLocation("advancedrocketry:textures/planets/IceWorld.png")),
-		DESERT(new ResourceLocation("advancedrocketry:textures/planets/desertworld.png")),
-		CARBON(new ResourceLocation("advancedrocketry:textures/planets/carbonworld.png")),
-		VENUSIAN(new ResourceLocation("advancedrocketry:textures/planets/venusian.png")),
 		GASGIANTBLUE(new ResourceLocation("advancedrocketry:textures/planets/GasGiantBlue.png")),
 		GASGIANTRED(new ResourceLocation("advancedrocketry:textures/planets/GasGiantred.png")),
-		GASGIANTBROWN(new ResourceLocation("advancedrocketry:textures/planets/gasgiantbrown.png")),
 		ASTEROID(new ResourceLocation("advancedrocketry:textures/planets/asteroid.png")),
 		UNKNOWN(new ResourceLocation("advancedrocketry:textures/planets/Unknown.png"))
 		;
@@ -208,10 +216,10 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	public static final int MAX_ATM_PRESSURE = 1600;
 	public static final int MIN_ATM_PRESSURE = 0;
 
-	public static final int MAX_DISTANCE = Integer.MAX_VALUE;
-	public static final int MIN_DISTANCE = 1;
+	public static final int MAX_DISTANCE = 200;
+	public static final int MIN_DISTANCE = 0;
 
-	public static final int MAX_GRAVITY = 400;
+	public static final int MAX_GRAVITY = 200;
 	public static final int MIN_GRAVITY = 0;
 
 
@@ -226,12 +234,10 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	public int orbitalDist;
 	private int originalAtmosphereDensity;
 	private int atmosphereDensity;
-	//Stored in Kelvin
 	public int averageTemperature;
 	public int rotationalPeriod;
 	//Stored in radians
 	public double orbitTheta;
-	public double baseOrbitTheta;
 	public double prevOrbitalTheta;
 	public double orbitalPhi;
 	public double rotationalPhi;
@@ -258,11 +264,13 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	private boolean isStation;
 	private boolean isGasGiant;
 	private boolean canGenerateCraters;
+	private boolean generateCratersSet; //XXX: compat variable, remove in future release
 	private boolean canGenerateGeodes;
+	private boolean generateGeodesSet; //XXX: compat variable, remove in future release
 	private boolean canGenerateVolcanos;
+	private boolean generateVolcanosSet; //XXX: compat variable, remove in future release
 	private boolean canGenerateStructures;
-	private boolean canDecorate; //Should the button draw shadows, etc.  Clientside
-	private boolean overrideDecoration;
+	private boolean generateStructuresSet; //XXX: compat variable, remove in future release
 	private float craterFrequencyMultiplier;
 	private float volcanoFrequencyMultiplier;
 	private float geodeFrequencyMultiplier;
@@ -303,10 +311,13 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		canGenerateGeodes = false;
 		canGenerateStructures = false;
 		canGenerateVolcanos = false;
+		generateCratersSet = false;
+		generateGeodesSet = false;
+		generateVolcanosSet = false;
+		generateStructuresSet = false;
 		craterFrequencyMultiplier = 1f;
 		volcanoFrequencyMultiplier = 1f;
 		geodeFrequencyMultiplier = 1f;
-		canDecorate = true;
 		
 		customIcon = "";
 		harvestableAtmosphere = new LinkedList<Fluid>();
@@ -407,7 +418,16 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	 * @return the color of the sun as an array of floats represented as  {r,g,b}
 	 */
 	public float[] getSunColor() {
-		return getStar().getColor();
+		try {
+                    return getStar().getColor();
+                } catch (Exception e) {
+                    float[] array = new float[3];
+                    array[0] = 0;
+                    array[1] = 0;
+                    array[2] = 0;
+                    System.out.println("Error grabbing sun color for : " + this.getName() + ", defaulting to 0!");
+                    return array;
+                }
 	}
 
 	/**
@@ -437,6 +457,18 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 			star = DimensionManager.getInstance().getStar(starId);
 		return star;
 	}
+        
+        public boolean hasBlackHole() {
+            if (getStar() == null) return false;
+            if (getStar().isBlackHole()) return true;
+            if (getStar().getSubStars() != null && !getStar().getSubStars().isEmpty()) {
+                for (StellarBody body : getStar().getSubStars()) {
+                    if (body == null) continue;
+                    if (body.isBlackHole()) return true;
+                }
+            }
+            return false;
+        }
 
 	public boolean hasSurface() {
 		return !(isGasGiant() || isStar());
@@ -798,23 +830,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	 * @return true if the planet should be rendered with shadows, atmosphere glow, clouds, etc
 	 */
 	public boolean hasDecorators() {
-		return !isAsteroid() && !isStar() || (canDecorate && overrideDecoration);
-	}
-	
-	public void setDecoratoration(boolean value)
-	{
-		canDecorate = value;
-		overrideDecoration = true;
-	}
-	
-	public boolean isDecorationOverridden()
-	{
-		return overrideDecoration;
-	}
-	
-	public void unsetDecoratoration()
-	{
-		overrideDecoration = false;
+		return !isAsteroid() && !isStar();
 	}
 	
 	/**
@@ -962,7 +978,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 	public void updateOrbit() {
 		this.prevOrbitalTheta = this.orbitTheta;
-		this.orbitTheta = AstronomicalBodyHelper.getOrbitalTheta(orbitalDist, getStar().getSize()) + baseOrbitTheta;
+		this.orbitTheta = (AdvancedRocketry.proxy.getWorldTimeUniversal(0)*(201-orbitalDist)*0.000002d) % (2*Math.PI);
 	}
 
 	/**
@@ -1382,7 +1398,6 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		gravitationalMultiplier = nbt.getFloat("gravitationalMultiplier");
 		orbitalDist = nbt.getInteger("orbitalDist");
 		orbitTheta = nbt.getDouble("orbitTheta");
-		baseOrbitTheta = nbt.getDouble("baseOrbitTheta");
 		orbitalPhi = nbt.getDouble("orbitPhi");
 		rotationalPhi = nbt.getDouble("rotationalPhi");
 		atmosphereDensity = nbt.getInteger("atmosphereDensity");
@@ -1548,7 +1563,6 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		nbt.setFloat("gravitationalMultiplier", gravitationalMultiplier);
 		nbt.setInteger("orbitalDist", orbitalDist);
 		nbt.setDouble("orbitTheta", orbitTheta);
-		nbt.setDouble("baseOrbitTheta", baseOrbitTheta);
 		nbt.setDouble("orbitPhi", orbitalPhi);
 		nbt.setDouble("rotationalPhi", rotationalPhi);
 		nbt.setInteger("atmosphereDensity", atmosphereDensity);
@@ -1605,7 +1619,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	
 	public int getAverageTemp()
 	{
-		averageTemperature = AstronomicalBodyHelper.getAverageTemperature(this.getStar(), this.orbitalDist, this.getAtmosphereDensity());
+		averageTemperature = DimensionManager.getInstance().getTemperature(this.getStar(), this.orbitalDist, this.getAtmosphereDensity());
 		return averageTemperature;
 	}
 

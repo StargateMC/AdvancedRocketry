@@ -19,6 +19,9 @@ import zmaster587.advancedRocketry.dimension.DimensionProperties;
 import zmaster587.advancedRocketry.entity.EntityUIPlanet;
 import zmaster587.libVulpes.render.RenderHelper;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRenderFactory<EntityUIPlanet> {
 
 	private static WavefrontObject sphere;
@@ -63,10 +66,11 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 		//Max because moon was too small to be visible
 
 		GL11.glScalef(.1f*sizeScale, .1f*sizeScale, .1f*sizeScale);
-		GlStateManager.disableLighting();
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDepthMask(false);
 		Minecraft.getMinecraft().renderEngine.bindTexture(properties.getPlanetIconLEO());
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_SRC_ALPHA);
+		GL11.glEnable(GL11.GL_BLEND);
+		OpenGlHelper.glBlendFunc(GL11.GL_ONE, GL11.GL_SRC_ALPHA, 0, 0);
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0);
 
 		GlStateManager.color(1f, 1, 1f, .5f);
@@ -82,7 +86,7 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 		GL11.glScalef(1.1f, 1.1f, 1.1f);
 		GL11.glRotatef(90, 0, 0, 1);
 		GL11.glRotated( -(properties.orbitTheta * 180/Math.PI), 1, 0, 0);
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 0, 0);
 		Minecraft.getMinecraft().renderEngine.bindTexture(DimensionProperties.shadow3);
 		GlStateManager.color(.1f, .1f, .1f,0.75f);
 		sphere.renderAll();
@@ -116,8 +120,8 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 		//Render ATM
 		if(properties.hasAtmosphere()) {
 			GL11.glPushMatrix();
-			GlStateManager.disableTexture2D();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 0, 0);
 			GlStateManager.color(properties.skyColor[0], properties.skyColor[1], properties.skyColor[2], .1f);
 
 			for(int i = 0; i < 5; i++) {
@@ -125,16 +129,16 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 				sphere.renderAll();
 			}
 			
-			GlStateManager.enableTexture2D();
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glPopMatrix();
 		}
 
 		//Render hololines
 		GL11.glPushMatrix();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 0, 0);
 
 		BufferBuilder buf = Tessellator.getInstance().getBuffer();
-		GlStateManager.disableTexture2D();
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		float myTime = ((entity.world.getTotalWorldTime() & 0xF)/16f);
 
@@ -148,12 +152,14 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 			Tessellator.getInstance().draw();
 		}
 		GlStateManager.alphaFunc(GL11.GL_GREATER, .1f);
-		GlStateManager.enableTexture2D();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glPopMatrix();
+
+		GL11.glDepthMask(true);
 
 		//RenderSelection
 		if(entity.isSelected()) {
-			GlStateManager.disableTexture2D();
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			double speedRotate = 0.025d;
 			GlStateManager.color(0.4f, 0.4f, 1f, 0.6f);
 			GL11.glTranslated(0, -1.25, 0);
@@ -166,7 +172,7 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 			GL11.glRotated(180 + speedRotate*System.currentTimeMillis() % 360, 0f, 1f, 0f);
 			RendererWarpCore.model.renderOnly("Rotate1");
 			GL11.glPopMatrix();
-			GlStateManager.enableTexture2D();
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
 
 		GL11.glPopMatrix();
@@ -182,13 +188,16 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 
 			//Render atmosphere UI/planet info
 
+			//GL11.glDepthMask(false);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+
 			RenderHelper.setupPlayerFacingMatrix(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), 0, 0, 0);
 			buffer = Tessellator.getInstance().getBuffer();
 
 			//Draw Mass indicator
 			Minecraft.getMinecraft().renderEngine.bindTexture(planetUIFG);
 			GlStateManager.color(1, 1, 1,0.8f);
-			renderMassIndicator(buffer, Math.min(properties.gravitationalMultiplier/2f, 1f));
+			renderMassIndicator(buffer, properties.gravitationalMultiplier/2f);
 
 			//Draw background
 			GlStateManager.color(1, 1, 1,1);
@@ -200,23 +209,26 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 
 			//Render ATM
 			Minecraft.getMinecraft().renderEngine.bindTexture(planetUIFG);
-			renderATMIndicator(buffer, Math.min(properties.getAtmosphereDensity()/200f, 1f));
+			renderATMIndicator(buffer, properties.getAtmosphereDensity()/200f);
 			//Render Temp
-			renderTemperatureIndicator(buffer, Math.min(properties.getAverageTemp()/400f,1f));
+			renderTemperatureIndicator(buffer, properties.getAverageTemp()/200f);
 
 			//Render planet name
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			//GL11.glDepthMask(true);
 			RenderHelper.cleanupPlayerFacingMatrix();
 			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), properties.getName(), 0, .9, 0, 5);
 			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), "NumMoons: " + properties.getChildPlanets().size(), 0, .6, 0, 5);
+			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), "Distance: " + properties.stellarDistanceFrom(entity.world, entity.getPosition()) + " SDU", 0, .12, 0, 5);
 
 			GL11.glPopMatrix();
 		}
 
 		//Clean up and make player not transparent
 		GlStateManager.color(1, 1, 1);
-		GlStateManager.disableBlend();
-		GlStateManager.enableLighting();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 0, 0);
 	}
 
 	protected void renderMassIndicator(BufferBuilder buffer, float percent) {

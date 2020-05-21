@@ -248,14 +248,16 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 		
 		StellarBody star = DimensionManager.getInstance().getDimensionProperties(world.provider.getDimension()).getStar();
 		boolean blackHole = star != null && star.isBlackHole();
-		for(StellarBody star2 : star.getSubStars())
+		if (star != null && star.getSubStars() != null) {
+                    for(StellarBody star2 : star.getSubStars()) {
+                        if (star2 == null) continue;
 			if(!star2.isBlackHole())
 			{
 				blackHole = false;
 				break;
 			}
-			
-		
+                    }
+                }
 		if(blackHole)
 			f2 *=0.25;
 		
@@ -412,7 +414,7 @@ public class WorldProviderPlanet extends WorldProvider implements IPlanetaryProv
 
 	@Override
 	public String getSaveFolder() {
-		return "advRocketry/" + super.getSaveFolder();
+            return DimensionManager.getInstance().getDimensionProperties(this.getDimension()).getName();
 	}
 
 	@Override
