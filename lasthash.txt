@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 dac0670e
+=======
+7afc3c7d
+>>>>>>> parent of 3c6f85ee... Should fix the NPE for Sun color

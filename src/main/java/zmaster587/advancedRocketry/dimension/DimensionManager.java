@@ -36,6 +36,7 @@ import zmaster587.advancedRocketry.dimension.DimensionProperties.AtmosphereTypes
 import zmaster587.advancedRocketry.dimension.DimensionProperties.Temps;
 import zmaster587.advancedRocketry.network.PacketDimInfo;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
+import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.advancedRocketry.util.SpawnListEntryNBT;
 import zmaster587.advancedRocketry.util.XMLPlanetLoader;
 import zmaster587.advancedRocketry.util.XMLPlanetLoader.DimensionPropertyCoupling;
@@ -73,10 +74,6 @@ public class DimensionManager implements IGalaxy {
 	//Reference to the worldProvider for any dimension created through this system, normally WorldProviderPlanet, set in AdvancedRocketry.java in preinit
 	public static Class<? extends WorldProvider> planetWorldProvider;
 	private HashMap<Integer,DimensionProperties> dimensionList;
-	private HashMap<String,DimensionProperties> dimensionListByName = new HashMap<String,DimensionProperties>();
-	private HashMap<String,ArrayList<DimensionProperties>> dimensionListByGalaxy = new HashMap<String,ArrayList<DimensionProperties>>();
-	private HashMap<String,ArrayList<DimensionProperties>> dimensionListBySystem = new HashMap<String,ArrayList<DimensionProperties>>();
-        
 	private HashMap<Integer, StellarBody> starList;
 
 	public static final int GASGIANT_DIMID_OFFSET = 0x100; //Offset by 256
@@ -93,17 +90,7 @@ public class DimensionManager implements IGalaxy {
 	public static StellarBody getSol() {
 		return getInstance().getStar(0);
 	}
-        public HashMap<String,DimensionProperties> getNameMap() {
-            return dimensionListByName;
-        }
-        public ArrayList<DimensionProperties> getDimensionsForSystem(String system, String galaxy) {
-            return dimensionListBySystem.get(system+galaxy);
-        }
-        
-        public ArrayList<DimensionProperties> getDimensionsForGalaxy(String galaxy) {
-            return dimensionListByGalaxy.get(galaxy);
-        }
-        
+
 	public static DimensionManager getInstance() {
 		return AdvancedRocketry.proxy.getDimensionManager(); //instance;
 	};
@@ -118,13 +105,15 @@ public class DimensionManager implements IGalaxy {
 
 		overworldProperties = new DimensionProperties(0);
 		overworldProperties.setAtmosphereDensityDirect(100);
-		overworldProperties.averageTemperature = 100;
+		//Temperature in Kelvin, 286 is 13 Degrees C
+		overworldProperties.averageTemperature = 286;
 		overworldProperties.gravitationalMultiplier = 1f;
 		overworldProperties.orbitalDist = 100;
 		overworldProperties.skyColor = new float[] {1f, 1f, 1f};
 		overworldProperties.setName("Earth");
 		overworldProperties.isNativeDimension = false;
-
+		overworldProperties.setStar(sol);
+		
 		defaultSpaceDimensionProperties = new DimensionProperties(SpaceObjectManager.WARPDIMID, false);
 		defaultSpaceDimensionProperties.setAtmosphereDensityDirect(0);
 		defaultSpaceDimensionProperties.averageTemperature = 0;
@@ -152,10 +141,7 @@ public class DimensionManager implements IGalaxy {
 	 * @return List of dimensions registered with this manager that are currently loaded on the server/integrated server
 	 */
 	public Integer[] getLoadedDimensions() {
-            Set<Integer> s1 = new HashSet<Integer>(Arrays.asList(getRegisteredDimensions()));
-            Set<Integer> s2 = new HashSet<Integer>(Arrays.asList(net.minecraftforge.common.DimensionManager.getIDs()));
-            s1.retainAll(s2);
-            return s1.toArray(new Integer[s1.size()]);
+		return getRegisteredDimensions();
 	}
 
 	/**
@@ -196,90 +182,15 @@ public class DimensionManager implements IGalaxy {
 	 * @param dimId id to register the planet with
 	 * @return the name for the next planet
 	 */
-        private String getAlphaNumericString(int n) 
-        { 
-
-            // chose a Character random from this String 
-            String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                        + "0123456789";
-
-            // create StringBuffer size of AlphaNumericString 
-            StringBuilder sb = new StringBuilder(n); 
-
-            for (int i = 0; i < n; i++) { 
-
-                // generate a random number between 
-                // 0 to AlphaNumericString variable length 
-                int index 
-                    = (int)(AlphaNumericString.length() 
-                            * Math.random()); 
-
-                // add Character one by one in end of sb 
-                sb.append(AlphaNumericString 
-                              .charAt(index)); 
-            } 
-
-            return sb.toString(); 
-        } 
-	private String getNextName(DimensionProperties props, int starId) {
-            String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            String numbers = "123456789";
-            // This is a hack to allow singleplayer to function.
-            try {
-                if (props.isMoon()) {
-                StellarBody body = getStar(starId);
-                System.out.println("Star is : " +body.getName());
-                String parentName = props.getParentProperties().getName();
-                String charToReplace = parentName.substring(0,6);
-                String end = parentName.substring(7,9);
-                String moonID = null;
-                for (char ch: numbers.toCharArray()) {
-                    moonID = charToReplace + ch + end;
-                    if (!isMoonNameUsed(moonID, props.getParentProperties())) {
-                        System.out.println(("Selecting moon name: " + moonID + " for : " + body));
-                        return moonID;
-                    }
-                }
-                    return moonID.toUpperCase();
-                } else {
-                    StellarBody body = getStar(starId);
-                    String planetID = null;
-                    System.out.println("Star is : " +body.getName());
-                    while (planetID == null || isPlanetNameUsed(body.getName().replace("SOL", planetID + "0"), body)) {
-                        String s = getAlphaNumericString(2);
-                        System.out.println("Selecting planet ID: " + s);
-                        planetID = s;
-                    }
-                    System.out.println(("Selecting planet name : " + body.getName().replace("SOL", planetID + "0")).toUpperCase() + " for star: " + body.getName());
-                    return (body.getName().replace("SOL", planetID + "0")).toUpperCase();            
-                }
-            } catch (Exception e) {
-                    System.out.println("Assigning random name: " + props.getName());
-                    e.printStackTrace();
-                    return getAlphaNumericString(9);
-            }
+	private String getNextName(int dimId) {
+		return "Sol-" + dimId;
 	}
-        public boolean isMoonNameUsed(String s, DimensionProperties planet) {
-            for (Integer id : planet.getChildPlanets()) {
-                DimensionProperties child = DimensionManager.getInstance().getDimensionProperties(id);
-                if (child.getName().equals(s)) return true;
-            }
-            return false;
-        }
-        public boolean isPlanetNameUsed(String s, StellarBody body) {
-            for (IDimensionProperties props : body.getPlanets()) {
-                if (props.getName().equals(s)) {
-                    return true;
-                }
-            }
-            return false;
-        }
+
 	/**
 	 * Called every tick to tick satellites
 	 */
 	public void tickDimensions() {
 		//Tick satellites
-		overworldProperties.tick();
 		for(int i : DimensionManager.getInstance().getLoadedDimensions()) {
 			DimensionManager.getInstance().getDimensionProperties(i).tick();
 		}
@@ -287,7 +198,6 @@ public class DimensionManager implements IGalaxy {
 
 	public void tickDimensionsClient() {
 		//Tick satellites
-		overworldProperties.updateOrbit();
 		for(int i : DimensionManager.getInstance().getLoadedDimensions()) {
 			DimensionManager.getInstance().getDimensionProperties(i).updateOrbit();
 		}
@@ -300,33 +210,6 @@ public class DimensionManager implements IGalaxy {
 	 */
 	public void setDimProperties( int dimId, DimensionProperties properties) {
 		dimensionList.put(new Integer(dimId),properties);
-                dimensionListByName.put(properties.getName(), properties);
-                ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
-                boolean existed = false;
-                if (dimensionListByGalaxy.containsKey(properties.getName().substring(7,9))) {
-                    props = dimensionListByGalaxy.get(properties.getName().substring(7,9));
-                    existed = true;
-                }
-                if (!props.contains(properties)) props.add(properties);
-                System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
-                if (existed) {
-                    dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
-                } else {
-                    dimensionListByGalaxy.put(properties.getName().substring(7,9), props);
-                }
-                props = new ArrayList<DimensionProperties>();
-                existed = false;
-                if (dimensionListBySystem.containsKey(properties.getName().substring(0,5) + properties.getName().substring(7,9))) {
-                    props = dimensionListBySystem.get(properties.getName().substring(0,5) + properties.getName().substring(7,9));
-                    existed = true;
-                }
-                if (!props.contains(properties)) props.add(properties);
-                System.out.println("Adding: " + properties.getName() + " to system: " + properties.getName().substring(0,5) + properties.getName().substring(7,9));
-                if (existed) {
-                    dimensionListBySystem.replace(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
-                } else {
-                    dimensionListBySystem.put(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
-                }
 	}
 
 	/**
@@ -334,7 +217,7 @@ public class DimensionManager implements IGalaxy {
 	 * @return next free id
 	 */
 	public int getNextFreeDim(int startingValue) {
-		for(int i = startingValue; i < 1000000; i++) {
+		for(int i = startingValue; i < 10000; i++) {
 			if(!net.minecraftforge.common.DimensionManager.isDimensionRegistered(i) && !dimensionList.containsKey(i))
 				return i;
 		}
@@ -349,17 +232,12 @@ public class DimensionManager implements IGalaxy {
 		return -1;
 	}
 
-	public int getTemperature(StellarBody star, int orbitalDistance, int atmPressure)
-	{
-		return (star.getTemperature() + (100 - orbitalDistance)*15 + atmPressure*18)/20;
-	}
-
 	public DimensionProperties generateRandom(int starId, int atmosphereFactor, int distanceFactor, int gravityFactor) {
 		return generateRandom(starId, 100, 100, 100, atmosphereFactor, distanceFactor, gravityFactor);
 	}
 
 	public DimensionProperties generateRandom(int starId, String name, int atmosphereFactor, int distanceFactor, int gravityFactor) {
-		return generateRandom(starId, name, 100, 100, 100, atmosphereFactor, distanceFactor, gravityFactor,null);
+		return generateRandom(starId, name, 100, 100, 100, atmosphereFactor, distanceFactor, gravityFactor);
 	}
 
 	/**
@@ -373,18 +251,19 @@ public class DimensionManager implements IGalaxy {
 	 * @param gravityFactor
 	 * @return the new dimension properties created for this planet
 	 */
-	public DimensionProperties generateRandom(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor, DimensionProperties props) {
+	public DimensionProperties generateRandom(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor) {
 		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
-                System.out.println("Generating solid planetoid for star: " + starId);
 
 		if(properties.getId() == Constants.INVALID_PLANET)
 			return null;
-                if (props != null) {
-                    properties.setParentPlanet(props);
-                }
-		properties.setName(getNextName(properties,starId));
-		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
-		int newDist = properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
+
+		if(name == "")
+			properties.setName(getNextName(properties.getId()));
+		else {
+			properties.setName(name);
+		}
+		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, DimensionProperties.MIN_ATM_PRESSURE, DimensionProperties.MAX_ATM_PRESSURE)); 
+		int newDist = properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor), DimensionProperties.MIN_DISTANCE, DimensionProperties.MAX_DISTANCE);
 
 		properties.gravitationalMultiplier = Math.min(Math.max(0.05f,(baseGravity + random.nextInt(gravityFactor) - gravityFactor/2)/100f), 1.3f);
 
@@ -409,6 +288,7 @@ public class DimensionManager implements IGalaxy {
 		} while(minDistance < 4);
 
 		properties.orbitalDist = newDist;
+		properties.baseOrbitTheta = random.nextInt(360) * Math.PI/180d;
 
 		properties.orbitalPhi = (random.nextGaussian() -0.5d)*180;
 		properties.rotationalPhi = (random.nextGaussian() -0.5d)*180;
@@ -417,7 +297,7 @@ public class DimensionManager implements IGalaxy {
 		properties.setStar(getStar(starId));
 
 		//Linear is easier. Earth is nominal!
-		properties.averageTemperature = getTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
+		properties.averageTemperature = AstronomicalBodyHelper.getAverageTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
 
 
 		if( AtmosphereTypes.getAtmosphereTypeFromValue(properties.getAtmosphereDensity()) == AtmosphereTypes.NONE && random.nextInt() % 5 == 0)
@@ -431,9 +311,9 @@ public class DimensionManager implements IGalaxy {
 			properties.setSeaLevel(random.nextInt(40) + 43);
 		}
 
-		properties.skyColor[0] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + (70 - properties.averageTemperature)/100f,0.2f,1);
+		properties.skyColor[0] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + (70 - (properties.averageTemperature/3))/100f,0.2f,1);
 		properties.skyColor[1] *= 1 - (random.nextFloat()*.5f);
-		properties.skyColor[2] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + (properties.averageTemperature - 70)/100f,0,1);
+		properties.skyColor[2] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + ((properties.averageTemperature/3) - 70)/100f,0,1);
 
 		if(random.nextInt() % 50 == 0)
 		{
@@ -454,18 +334,19 @@ public class DimensionManager implements IGalaxy {
 
 
 	public DimensionProperties generateRandom(int starId, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor) {
-		return generateRandom(starId, "", baseAtmosphere, baseDistance, baseGravity, atmosphereFactor, distanceFactor, gravityFactor,null);
+		return generateRandom(starId, "", baseAtmosphere, baseDistance, baseGravity, atmosphereFactor, distanceFactor, gravityFactor);
 	}
 
-	public DimensionProperties generateRandomGasGiant(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor, DimensionProperties props) {
-            System.out.println("Generating gas giant for star: " + starId);
-            DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
-                if (props != null) {
-                    properties.setParentPlanet(props);
-                }
-		properties.setName(getNextName(properties,starId));
-		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
-		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
+	public DimensionProperties generateRandomGasGiant(int starId, String name, int baseAtmosphere, int baseDistance, int baseGravity,int atmosphereFactor, int distanceFactor, int gravityFactor) {
+		DimensionProperties properties = new DimensionProperties(getNextFreeDim(dimOffset));
+
+		if(name == "")
+			properties.setName(getNextName(properties.getId()));
+		else {
+			properties.setName(name);
+		}
+		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, DimensionProperties.MIN_ATM_PRESSURE, DimensionProperties.MAX_ATM_PRESSURE));
+		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor), DimensionProperties.MIN_DISTANCE, 800);
 		//System.out.println(properties.orbitalDist);
 		properties.gravitationalMultiplier = Math.min(Math.max(0.05f,(baseGravity + random.nextInt(gravityFactor) - gravityFactor/2)/100f), 1.3f);
 
@@ -488,7 +369,7 @@ public class DimensionManager implements IGalaxy {
 		properties.setStar(getStar(starId));
 
 		//Linear is easier. Earth is nominal!
-		properties.averageTemperature = getTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
+		properties.averageTemperature = AstronomicalBodyHelper.getAverageTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
 		properties.setGasGiant(true);
 
 		// Add all gasses for the default world
@@ -543,37 +424,7 @@ public class DimensionManager implements IGalaxy {
 				net.minecraftforge.common.DimensionManager.registerDimension(dimId, PlanetDimensionType);
 		}
 		dimensionList.put(dimId, properties);
-                dimensionListByName.put(properties.getName(), properties);
-                ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
-                boolean existed = false;
-                try {
-                    if (dimensionListByGalaxy.containsKey(properties.getName().substring(7,9))) {
-                        props = dimensionListByGalaxy.get(properties.getName().substring(7,9));
-                        existed = true;
-                    }
-                    if (!props.contains(properties)) props.add(properties);
-                    //System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
-                    if (existed) {
-                        dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
-                    } else {
-                        dimensionListByGalaxy.put(properties.getName().substring(7,9), props);
-                    }
-                    props = new ArrayList<DimensionProperties>();
-                    existed = false;
-                    if (dimensionListBySystem.containsKey(properties.getName().substring(0,5) + properties.getName().substring(7,9))) {
-                        props = dimensionListBySystem.get(properties.getName().substring(0,5) + properties.getName().substring(7,9));
-                        existed = true;
-                    }
-                    if (existed) {
-                        dimensionListBySystem.replace(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
-                    } else {
-                        dimensionListBySystem.put(properties.getName().substring(0,5) + properties.getName().substring(7,9), props);
-                    }
-                } catch (Exception e) {
-                    System.out.println("Unable to process galaxy/system identifier for : " + properties.getName());
-                }
-                if (!props.contains(properties)) props.add(properties);
-                //System.out.println("Adding: " + properties.getName() + " to system: " + properties.getName().substring(0,5) + properties.getName().substring(7,9));
+
 		return true;
 	}
 
@@ -588,9 +439,6 @@ public class DimensionManager implements IGalaxy {
 		}
 		dimensionList.clear();
 		starList.clear();
-                dimensionListByName.clear();
-                dimensionListByGalaxy.clear();
-                dimensionListBySystem.clear();
 	}
 
 	/**
@@ -849,14 +697,14 @@ public class DimensionManager implements IGalaxy {
 			int baseAtm = 180;
 			int baseDistance = 100;
 
-			DimensionProperties	properties = DimensionManager.getInstance().generateRandomGasGiant(star.getId(), "",baseDistance + 50,baseAtm,125,100,100,75,null);
+			DimensionProperties	properties = DimensionManager.getInstance().generateRandomGasGiant(star.getId(), "",baseDistance + 50,baseAtm,125,100,100,75);
 
 			dimPropList.add(properties);
 			if(properties.gravitationalMultiplier >= 1f) {
-				int numMoons = random.nextInt(4);
+				int numMoons = random.nextInt(8);
 
 				for(int ii = 0; ii < numMoons; ii++) {
-					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), "", 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50, properties);
+					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), properties.getName() + ": " + ii, 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50);
 					if(moonProperties == null)
 						continue;
 
@@ -896,7 +744,7 @@ public class DimensionManager implements IGalaxy {
 				int numMoons = random.nextInt(4);
 
 				for(int ii = 0; ii < numMoons; ii++) {
-					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), "", 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50,properties);
+					DimensionProperties moonProperties = DimensionManager.getInstance().generateRandom(star.getId(), properties.getName() + ": " + ii, 25,100, (int)(properties.gravitationalMultiplier/.02f), 25, 100, 50);
 
 					if(moonProperties == null)
 						continue;
@@ -1190,7 +1038,6 @@ public class DimensionManager implements IGalaxy {
 				for(StellarBody star : dimCouplingList.stars) {
 					int numRandomGeneratedPlanets = loader.getMaxNumPlanets(star);
 					int numRandomGeneratedGasGiants = loader.getMaxNumGasGiants(star);
-                                        System.out.println("Processing star: " + star.getName());
 					generateRandomPlanets(star, numRandomGeneratedPlanets, numRandomGeneratedGasGiants);
 				}
 			}
