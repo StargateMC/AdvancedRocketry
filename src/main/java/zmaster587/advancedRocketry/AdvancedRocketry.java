@@ -167,7 +167,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 
-@Mod(modid="advancedrocketry", name="Advanced Rocketry", version="@MAJOR@.@MINOR@.@REVIS@.@BUILD@", dependencies="required-after:libvulpes@[%LIBVULPESVERSION%,)")
+@Mod(modid="advancedrocketry", name="Advanced Rocketry", version="1.7.0.-221", dependencies="required-after:libvulpes@[%LIBVULPESVERSION%,)")
 public class AdvancedRocketry {
 
 
