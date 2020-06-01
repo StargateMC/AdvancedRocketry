@@ -31,6 +31,7 @@ public class StellarBody {
 	public List<StellarBody> subStars;
 	float starSeperation;
 	private boolean isBlackHole;
+	StellarBody parentStar;
 
 	public StellarBody() {
 		planets = new HashMap<Integer,IDimensionProperties>();
@@ -45,8 +46,11 @@ public class StellarBody {
 	}
 
 	public void addSubStar(StellarBody star) {
-		star.setName(name);
+		if(star.name == null)
+			star.setName(name + "-" + String.valueOf(subStars.size()+1));
+		star.setId(this.id);
 		subStars.add(star);
+		star.parentStar = this;
 	}
 	
 	public boolean isBlackHole() {
@@ -133,6 +137,8 @@ public class StellarBody {
 	 * @return the number of planets orbiting this star
 	 */
 	public int getNumPlanets() {
+		if(parentStar != null)
+			return parentStar.getNumPlanets();
 		return numPlanets;
 	}
 
@@ -276,6 +282,7 @@ public class StellarBody {
 				StellarBody star = new StellarBody();
 				star.readFromNBT(list.getCompoundTagAt(i));
 				subStars.add(star);
+				star.parentStar = this;
 			}
 		}
 	}

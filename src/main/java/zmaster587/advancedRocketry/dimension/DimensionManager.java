@@ -36,6 +36,7 @@ import zmaster587.advancedRocketry.dimension.DimensionProperties.AtmosphereTypes
 import zmaster587.advancedRocketry.dimension.DimensionProperties.Temps;
 import zmaster587.advancedRocketry.network.PacketDimInfo;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
+import zmaster587.advancedRocketry.util.AstronomicalBodyHelper;
 import zmaster587.advancedRocketry.util.SpawnListEntryNBT;
 import zmaster587.advancedRocketry.util.XMLPlanetLoader;
 import zmaster587.advancedRocketry.util.XMLPlanetLoader.DimensionPropertyCoupling;
@@ -118,13 +119,15 @@ public class DimensionManager implements IGalaxy {
 
 		overworldProperties = new DimensionProperties(0);
 		overworldProperties.setAtmosphereDensityDirect(100);
-		overworldProperties.averageTemperature = 100;
+		//Temperature in Kelvin, 286 is 13 Degrees C
+		overworldProperties.averageTemperature = 286;
 		overworldProperties.gravitationalMultiplier = 1f;
 		overworldProperties.orbitalDist = 100;
 		overworldProperties.skyColor = new float[] {1f, 1f, 1f};
 		overworldProperties.setName("Earth");
 		overworldProperties.isNativeDimension = false;
-
+		overworldProperties.setStar(sol);
+		
 		defaultSpaceDimensionProperties = new DimensionProperties(SpaceObjectManager.WARPDIMID, false);
 		defaultSpaceDimensionProperties.setAtmosphereDensityDirect(0);
 		defaultSpaceDimensionProperties.averageTemperature = 0;
@@ -279,7 +282,6 @@ public class DimensionManager implements IGalaxy {
 	 */
 	public void tickDimensions() {
 		//Tick satellites
-		overworldProperties.tick();
 		for(int i : DimensionManager.getInstance().getLoadedDimensions()) {
 			DimensionManager.getInstance().getDimensionProperties(i).tick();
 		}
@@ -287,7 +289,6 @@ public class DimensionManager implements IGalaxy {
 
 	public void tickDimensionsClient() {
 		//Tick satellites
-		overworldProperties.updateOrbit();
 		for(int i : DimensionManager.getInstance().getLoadedDimensions()) {
 			DimensionManager.getInstance().getDimensionProperties(i).updateOrbit();
 		}
@@ -349,11 +350,6 @@ public class DimensionManager implements IGalaxy {
 		return -1;
 	}
 
-	public int getTemperature(StellarBody star, int orbitalDistance, int atmPressure)
-	{
-		return (star.getTemperature() + (100 - orbitalDistance)*15 + atmPressure*18)/20;
-	}
-
 	public DimensionProperties generateRandom(int starId, int atmosphereFactor, int distanceFactor, int gravityFactor) {
 		return generateRandom(starId, 100, 100, 100, atmosphereFactor, distanceFactor, gravityFactor);
 	}
@@ -379,12 +375,14 @@ public class DimensionManager implements IGalaxy {
 
 		if(properties.getId() == Constants.INVALID_PLANET)
 			return null;
+                
                 if (props != null) {
                     properties.setParentPlanet(props);
                 }
 		properties.setName(getNextName(properties,starId));
-		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
-		int newDist = properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
+		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, DimensionProperties.MIN_ATM_PRESSURE, DimensionProperties.MAX_ATM_PRESSURE)); 
+		int newDist = properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor), DimensionProperties.MIN_DISTANCE, DimensionProperties.MAX_DISTANCE);
+
 
 		properties.gravitationalMultiplier = Math.min(Math.max(0.05f,(baseGravity + random.nextInt(gravityFactor) - gravityFactor/2)/100f), 1.3f);
 
@@ -409,6 +407,7 @@ public class DimensionManager implements IGalaxy {
 		} while(minDistance < 4);
 
 		properties.orbitalDist = newDist;
+		properties.baseOrbitTheta = random.nextInt(360) * Math.PI/180d;
 
 		properties.orbitalPhi = (random.nextGaussian() -0.5d)*180;
 		properties.rotationalPhi = (random.nextGaussian() -0.5d)*180;
@@ -417,7 +416,7 @@ public class DimensionManager implements IGalaxy {
 		properties.setStar(getStar(starId));
 
 		//Linear is easier. Earth is nominal!
-		properties.averageTemperature = getTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
+		properties.averageTemperature = AstronomicalBodyHelper.getAverageTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
 
 
 		if( AtmosphereTypes.getAtmosphereTypeFromValue(properties.getAtmosphereDensity()) == AtmosphereTypes.NONE && random.nextInt() % 5 == 0)
@@ -431,9 +430,9 @@ public class DimensionManager implements IGalaxy {
 			properties.setSeaLevel(random.nextInt(40) + 43);
 		}
 
-		properties.skyColor[0] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + (70 - properties.averageTemperature)/100f,0.2f,1);
+		properties.skyColor[0] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + (70 - (properties.averageTemperature/3))/100f,0.2f,1);
 		properties.skyColor[1] *= 1 - (random.nextFloat()*.5f);
-		properties.skyColor[2] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + (properties.averageTemperature - 70)/100f,0,1);
+		properties.skyColor[2] *= 1 - MathHelper.clamp(random.nextFloat()*0.1f + ((properties.averageTemperature/3) - 70)/100f,0,1);
 
 		if(random.nextInt() % 50 == 0)
 		{
@@ -464,8 +463,9 @@ public class DimensionManager implements IGalaxy {
                     properties.setParentPlanet(props);
                 }
 		properties.setName(getNextName(properties,starId));
-		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, 0, 200)); 
-		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor),0,200);
+		properties.setAtmosphereDensityDirect(MathHelper.clamp(baseAtmosphere + random.nextInt(atmosphereFactor) - atmosphereFactor/2, DimensionProperties.MIN_ATM_PRESSURE, DimensionProperties.MAX_ATM_PRESSURE));
+		properties.orbitalDist = MathHelper.clamp(baseDistance + random.nextInt(distanceFactor), DimensionProperties.MIN_DISTANCE, 800);
+
 		//System.out.println(properties.orbitalDist);
 		properties.gravitationalMultiplier = Math.min(Math.max(0.05f,(baseGravity + random.nextInt(gravityFactor) - gravityFactor/2)/100f), 1.3f);
 
@@ -488,7 +488,7 @@ public class DimensionManager implements IGalaxy {
 		properties.setStar(getStar(starId));
 
 		//Linear is easier. Earth is nominal!
-		properties.averageTemperature = getTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
+		properties.averageTemperature = AstronomicalBodyHelper.getAverageTemperature(properties.getStar(), properties.orbitalDist, properties.getAtmosphereDensity());
 		properties.setGasGiant(true);
 
 		// Add all gasses for the default world
