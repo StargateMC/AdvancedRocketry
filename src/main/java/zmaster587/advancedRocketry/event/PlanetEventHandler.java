@@ -331,11 +331,11 @@ public class PlanetEventHandler {
 
 		PacketHandler.sendToDispatcher(new PacketDimInfo(0, DimensionManager.getInstance().getDimensionProperties(0)), event.getManager());
 	}
-//        @SubscribeEvent
-//	public void connectToServer(ClientConnectedToServerEvent event)
-//	{
-//		//zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().unregisterAllDimensions();
-//	}
+        @SubscribeEvent
+	public void connectToServer(ClientConnectedToServerEvent event)
+	{
+		zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().unregisterAllDimensions();
+	}
         @SubscribeEvent
 	public void disconnectedFromServer(ClientDisconnectionFromServerEvent event)
 	{
