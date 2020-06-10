@@ -43,7 +43,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 	private float orbitalDistance;
 	private int destinationDimId;
 	private int fuelAmount;
-	private final int MAX_FUEL = 5000;
+	private final int MAX_FUEL = 10000;
 	private HashedBlockPosition spawnLocation;
 	private List<StationLandingLocation> spawnLocations;
 	private List<HashedBlockPosition> warpCoreLocation;
