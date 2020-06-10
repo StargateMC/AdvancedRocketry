@@ -49,7 +49,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		}
 	}
 
-	private static final int size = 100000;
+	private static final int size = 2000;
 	private int topLevel;
 	ISelectionNotify hostTile;
 	private int currentSystem, selectedSystem;
@@ -64,7 +64,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 	private HashMap<Integer, PlanetRenderProperties> renderPropertiesMap;
 	PlanetRenderProperties currentlySelectedPlanet;
 	IPlanetDefiner planetDefiner;
-
+        
 	public ModulePlanetSelector(int planetId, ResourceLocation backdrop, ISelectionNotify tile, boolean star) {
 		this(planetId, backdrop, tile, null, star);
 	}
