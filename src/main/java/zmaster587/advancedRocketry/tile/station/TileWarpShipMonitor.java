@@ -170,13 +170,13 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
             }
             String returnValue = "";
             if (days > 0) {
-                returnValue += (days + " d, ");
+                returnValue += (days + "d,");
             }
             if (hours > 0) {
-                returnValue += (hours + " h, ");            
+                returnValue += (hours + "h,");            
             }
             if (minutes > 0) {
-                returnValue += (minutes + " m, ");            
+                returnValue += (minutes + "m,");            
             }
             returnValue += (seconds + " s");
             return returnValue;

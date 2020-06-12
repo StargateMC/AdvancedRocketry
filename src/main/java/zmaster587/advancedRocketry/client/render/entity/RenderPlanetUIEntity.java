@@ -21,6 +21,7 @@ import zmaster587.libVulpes.render.RenderHelper;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import zmaster587.advancedRocketry.tile.station.TileWarpShipMonitor;
 
 public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRenderFactory<EntityUIPlanet> {
 
@@ -212,6 +213,7 @@ public class RenderPlanetUIEntity extends Render<EntityUIPlanet> implements IRen
 			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), properties.getName(), 0, .9, 0, 5);
 			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), "NumMoons: " + properties.getChildPlanets().size(), 0, .6, 0, 5);
 			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), "Distance: " + properties.stellarDistanceFrom(entity.world, entity.getPosition()) + " SDU", 0, .12, 0, 5);
+			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), "ETA: " + (TileWarpShipMonitor.getEnglishTimeFromMs((properties.stellarDistanceFrom(entity.world, entity.getPosition()) * 5000))), 0, .15, 0, 5);
 
 			GL11.glPopMatrix();
 		}
