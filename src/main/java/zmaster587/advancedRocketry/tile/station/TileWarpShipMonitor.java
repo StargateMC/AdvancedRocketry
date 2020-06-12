@@ -61,7 +61,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 	private static final int ARTIFACT_BEGIN_RANGE = 4, ARTIFACT_END_RANGE = 8;
 	ModulePanetImage srcPlanetImg, dstPlanetImg;
 	ModuleSync sync1, sync2, sync3;
-	ModuleText srcPlanetText, dstPlanetText, warpFuel, status, warpCapacity;
+	ModuleText srcPlanetText, dstPlanetText, warpFuel, status, warpCapacity, eta;
 	int warpCost = -1;
 	int dstPlanet, srcPlanet;
 	private ModuleTab tabModule;
@@ -236,8 +236,10 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 				if(world.isRemote) {
 					warpFuel.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuelcost") + (flag ? String.valueOf(warpCost) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? getSpaceObject().getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
+					eta.setText("Time Left:" + (getSpaceObject().getTransitionTime() != -1 ? getSpaceObject().getTransitionTime() - System.currentTimeMillis() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					modules.add(warpFuel);
 					modules.add(warpCapacity);
+                                        modules.add(eta);
 
 					modules.add(new ModuleScaledImage(baseX,baseY,sizeX,sizeY, zmaster587.libVulpes.inventory.TextureResources.starryBG));
 					
@@ -340,6 +342,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 				srcPlanetText.setAlwaysOnTop(true);
 				warpFuel = new ModuleText(baseX + 82, baseY + sizeY + 25, "", 0x1b1b1b);
 				warpCapacity = new ModuleText(baseX + 82, baseY + sizeY + 35, "", 0x1b1b1b);
+				eta = new ModuleText(baseX + 82, baseY + sizeY + 45, "", 0x1b1b1b);
 
 				//DEST planet
 				baseX = 94;
@@ -359,7 +362,8 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 
 			warpFuel.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuelcost") + (warpCost < Integer.MAX_VALUE ? String.valueOf(warpCost) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 			warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? ((SpaceStationObject)station).getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
-
+                        eta.setText("Time Left:" + (getSpaceObject().getTransitionTime() != -1 ? getSpaceObject().getTransitionTime() - System.currentTimeMillis() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
+					
 
 
 			DimensionProperties dstProps = null;
