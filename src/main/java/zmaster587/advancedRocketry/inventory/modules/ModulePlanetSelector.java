@@ -153,16 +153,16 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 			if(planetDefiner != null && !planetDefiner.isStarKnown(star))
 				continue;
 
-			int displaySize = (int)(planetSizeMultiplier*star.getDisplayRadius());
-			int offsetX = (star.getPosX()/10) + (posX) - displaySize/2; 
-			int offsetY = (star.getPosZ()/10) + (posY) - displaySize/2;
+			int displaySize = (int)(planetSizeMultiplier*star.getDisplayRadius())/5;
+			int offsetX = (star.getPosX()/5) + (posX) - displaySize/2; 
+			int offsetY = (star.getPosZ()/5) + (posY) - displaySize/2;
 			ModuleButton button;
 			
 			if(star.getSubStars() != null && !star.getSubStars().isEmpty()) {
 				float phaseInc = 360/star.getSubStars().size();
 				float phase = 0;
 				for(StellarBody star2 : star.getSubStars()) {
-					displaySize = (int)(planetSizeMultiplier*star2.getDisplayRadius());
+					displaySize = (int)(planetSizeMultiplier*star2.getDisplayRadius())/5;
 
 					int deltaX, deltaY;
 					deltaX = (int)(star2.getStarSeparation()*MathHelper.cos(phase)*0.5);
