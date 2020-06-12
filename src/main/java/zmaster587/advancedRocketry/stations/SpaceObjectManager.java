@@ -407,7 +407,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 
 
 		((DimensionProperties)station.getProperties()).setAtmosphereDensityDirect(0);
-		nextStationTransitionTick = (int)(ARConfiguration.getCurrentConfig().travelTimeMultiplier*timeDelta) + DimensionManager.getWorld(ARConfiguration.getCurrentConfig().spaceDimId).getTotalWorldTime();
+		nextStationTransitionTick = (int)(ARConfiguration.getCurrentConfig().travelTimeMultiplier*timeDelta) + System.currentTimeMillis();
 		station.beginTransition(nextStationTransitionTick);
 		
 	}

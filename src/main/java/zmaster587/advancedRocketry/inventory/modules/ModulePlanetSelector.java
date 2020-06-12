@@ -154,8 +154,8 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 				continue;
 
 			int displaySize = (int)(planetSizeMultiplier*star.getDisplayRadius());
-			int offsetX = star.getPosX() + posX - displaySize/2; 
-			int offsetY = star.getPosZ() + posY - displaySize/2;
+			int offsetX = (star.getPosX()/10) + posX - displaySize/2; 
+			int offsetY = (star.getPosZ()/10) + posY - displaySize/2;
 			ModuleButton button;
 			
 			if(star.getSubStars() != null && !star.getSubStars().isEmpty()) {
