@@ -148,7 +148,40 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			boolean commit) {
 		return data.extractData(maxAmount, type, dir, commit);
 	}
-
+        
+        public static String getEnglishTimeFromMs(Long ms) {
+            if (ms < 1000) return (ms + "ms");
+            if (ms == null) return "Never";
+            Long seconds = ms / 1000;
+            int days = 0;
+            int hours = 0;
+            int minutes = 0;
+            while (seconds >= 86400) {
+                days += 1;
+                seconds -= 86400;
+            }
+            while (seconds >= 3600) {
+                hours += 1;
+                seconds -= 3600;
+            }
+            while (seconds >= 60) {
+                minutes += 1;
+                seconds -= 60;
+            }
+            String returnValue = "";
+            if (days > 0) {
+                returnValue += (days + " d, ");
+            }
+            if (hours > 0) {
+                returnValue += (hours + " h, ");            
+            }
+            if (minutes > 0) {
+                returnValue += (minutes + " m, ");            
+            }
+            returnValue += (seconds + " s");
+            return returnValue;
+        }
+        
 	@Override
 	public List<ModuleBase> getModules(int ID, EntityPlayer player) {
 		List<ModuleBase> modules = new LinkedList<ModuleBase>();
@@ -236,7 +269,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 				if(world.isRemote) {
 					warpFuel.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuelcost") + (flag ? String.valueOf(warpCost) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? getSpaceObject().getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
-					eta.setText("Time Left:" + (getSpaceObject().getTransitionTime() != -1 ? getSpaceObject().getTransitionTime() - System.currentTimeMillis() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
+					eta.setText("Time Left:" + (getSpaceObject().getTransitionTime() != -1 ? getEnglishTimeFromMs(getSpaceObject().getTransitionTime() - System.currentTimeMillis()) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					modules.add(warpFuel);
 					modules.add(warpCapacity);
                                         modules.add(eta);
@@ -362,7 +395,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 
 			warpFuel.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuelcost") + (warpCost < Integer.MAX_VALUE ? String.valueOf(warpCost) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 			warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? ((SpaceStationObject)station).getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
-                        eta.setText("Time Left:" + (getSpaceObject().getTransitionTime() != -1 ? getSpaceObject().getTransitionTime() - System.currentTimeMillis() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
+                        eta.setText("Time Left:" + (getSpaceObject().getTransitionTime() != -1 ? getEnglishTimeFromMs(getSpaceObject().getTransitionTime() - System.currentTimeMillis()) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					
 
 
