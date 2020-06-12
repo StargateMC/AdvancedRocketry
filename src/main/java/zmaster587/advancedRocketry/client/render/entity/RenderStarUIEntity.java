@@ -147,8 +147,7 @@ public class RenderStarUIEntity extends Render<EntityUIStar> implements IRenderF
 			RenderHelper.cleanupPlayerFacingMatrix();
 			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.x, hitObj.hitVec.y, hitObj.hitVec.z), body.getName(), 0, .9, 0, 5);
 			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.x, hitObj.hitVec.y, hitObj.hitVec.z), "Num Planets: " + body.getNumPlanets(), 0, .6, 0, 5);
-			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.x, hitObj.hitVec.y, hitObj.hitVec.z), "Distance: " + body.stellarDistanceFrom(entity.world, entity.getPosition()) + " SDU", 0, .12, 0, 5);
-			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.z, hitObj.hitVec.y, hitObj.hitVec.x), "ETA: " + (TileWarpShipMonitor.getEnglishTimeFromMs(((long)body.stellarDistanceFrom(entity.world, entity.getPosition()) * 5000))), .3, 0, 0, 5);
+			RenderHelper.renderTag(Minecraft.getMinecraft().player.getDistanceSq(hitObj.hitVec.x, hitObj.hitVec.y, hitObj.hitVec.z), "Distance: " + body.stellarDistanceFrom(entity.world, entity.getPosition()) + " SDU (" + TileWarpShipMonitor.getEnglishTimeFromMs(((long)body.stellarDistanceFrom(entity.world, entity.getPosition()) * 5000)) + ")", 0, .12, 0, 5);
 
 			GL11.glPopMatrix();
 		}
