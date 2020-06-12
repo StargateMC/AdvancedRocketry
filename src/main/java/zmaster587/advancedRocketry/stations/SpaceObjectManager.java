@@ -296,7 +296,7 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 		if(DimensionManager.getWorld(ARConfiguration.getCurrentConfig().spaceDimId) == null)
 			return;
 		
-		long worldTime = DimensionManager.getWorld(ARConfiguration.getCurrentConfig().spaceDimId).getTotalWorldTime();
+		long worldTime = System.currentTimeMillis();
 		//Assuming server
 		//If no dim undergoing transition then nextTransitionTick = -1
 		if((nextStationTransitionTick != -1 && worldTime >= nextStationTransitionTick && spaceStationOrbitMap.get(WARPDIMID) != null) || (nextStationTransitionTick == -1 && spaceStationOrbitMap.get(WARPDIMID) != null && !spaceStationOrbitMap.get(WARPDIMID).isEmpty())) {
