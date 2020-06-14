@@ -150,8 +150,8 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 	}
         
         public static String getEnglishTimeFromMs(Long ms) {
-            if (ms < 1000) return (ms + "ms");
             if (ms == null || ms <= 0) return "N/A";
+            if (ms < 1000) return (ms + "ms");
             Long seconds = ms / 1000;
             int days = 0;
             int hours = 0;
