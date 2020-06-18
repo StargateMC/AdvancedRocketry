@@ -24,10 +24,11 @@ import zmaster587.libVulpes.network.PacketHandler;
 import zmaster587.libVulpes.network.PacketMachine;
 import zmaster587.libVulpes.util.INetworkMachine;
 import zmaster587.libVulpes.util.ZUtils.RedstoneState;
-
+import net.minecraft.util.math.BlockPos;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class TilePlanetaryHologram extends TileEntity implements ITickable,IButtonInventory, IModularInventory, ISliderBar, INetworkMachine {
 
@@ -100,6 +101,19 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
 		return (!powered && state == RedstoneState.INVERTED) || (powered && state == RedstoneState.ON) || state == RedstoneState.OFF;
 	}
 
+        public StellarBody getCurrentStar() {
+            try {
+                return DimensionManager.getEffectiveDimId(this.world, this.getPos()).getStar();
+            } catch (Exception e) {
+                try {
+                    return DimensionManager.getEffectiveDimId(-102, new BlockPos(0,0,0)).getStar();
+                } catch (Exception ex) {
+                    return null;
+                }
+            }
+            
+        }
+        
 	@Override
 	public void update() {
 		if(!world.isRemote) {
@@ -117,27 +131,33 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
 					}
 
 					if(stellarMode) {
+                                                Random r = new Random();
 						for(EntityUIStar entity : starEntities) {
                                                     double equivX = entity.getStarProperties().getPosX();
                                                     double equivZ = entity.getStarProperties().getPosZ();
-                                                    System.out.println(entity.getStarProperties().getName() + " before x: " + equivX);
-                                                    System.out.println(entity.getStarProperties().getName() + " before z: " + equivZ);
                                                     double equivY = 1;
-                                                    
                                                     while (equivX > 500) equivX -= 1000;
                                                     while (equivZ > 500) equivZ -= 1000;
                                                     while (equivX < -500) equivX += 1000;
                                                     while (equivZ < -500) equivZ += 1000;
-                                                    System.out.println(entity.getStarProperties().getName() + " after x: " + equivX);
-                                                    System.out.println(entity.getStarProperties().getName() + " after z: " + equivZ);
-                                                    if (entity.getStarProperties().getName().endsWith("ML")) equivY = 3;
-                                                    if (entity.getStarProperties().getName().endsWith("OL")) equivY = 5;
-                                                    if (entity.getStarProperties().getName().endsWith("IL")) equivY = 7;
-                                                    if (entity.getStarProperties().getName().endsWith("HO")) equivY = 9;
-                                                    if (entity.getStarProperties().getName().endsWith("1D")) equivY = 11;
+                                                    if (this.getCurrentStar() != null) {
+                                                        try {
+                                                            equivY += TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0005;
+                                                        } catch (Exception e) {
+                                                            equivY += 30;
+                                                        }
+                                                    } else {
+                                                        if (entity.getStarProperties().getName().endsWith("ML")) equivY = 3;
+                                                        if (entity.getStarProperties().getName().endsWith("OL")) equivY = 5;
+                                                        if (entity.getStarProperties().getName().endsWith("IL")) equivY = 7;
+                                                        if (entity.getStarProperties().getName().endsWith("HO")) equivY = 9;
+                                                        if (entity.getStarProperties().getName().endsWith("1D")) equivY = 11;
+                                                        float randomY = r.nextFloat();
+                                                        if (r.nextBoolean()) randomY *= -1;
+                                                        equivY += randomY;
+                                                    }
                                                     
                                                     entity.setPosition(this.pos.getX() + .5 + getInterpHologramSize()*equivX/100f, this.pos.getY() + equivY, this.pos.getZ() + .5 + getInterpHologramSize()*equivZ/100f);
-                                                    System.out.println(entity.getStarProperties().getName() + " afterPos: " + entity.getPosition().toString());
                                                     entity.setScale(getInterpHologramSize());
 						}
 					}
