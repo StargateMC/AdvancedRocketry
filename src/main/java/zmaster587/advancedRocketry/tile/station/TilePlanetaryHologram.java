@@ -147,14 +147,14 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
                                                         } else {
                                                             diff = this.getCurrentStar().getPosX() - entity.getStarProperties().getPosX();
                                                         }
-                                                        equivX += (diff * 0.03);
+                                                        equivX += (diff * 0.01);
                                                         diff = 0;
                                                         if (this.getCurrentStar().getPosZ() > entity.getStarProperties().getPosZ()) {
                                                             diff = entity.getStarProperties().getPosZ() - this.getCurrentStar().getPosZ();
                                                         } else {
                                                             diff = this.getCurrentStar().getPosZ() - entity.getStarProperties().getPosZ();
                                                         }
-                                                        equivZ += (diff * 0.03);
+                                                        equivZ += (diff * 0.01);
                                                         try {
                                                             equivY += TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0005;
                                                         } catch (Exception e) {
