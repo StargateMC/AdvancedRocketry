@@ -142,21 +142,27 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
                                                     while (equivZ < -500) equivZ += 1000;
                                                     if (this.getCurrentStar() != null) {
                                                         double diff = 0;
+                                                        boolean flip = false;
                                                         if (this.getCurrentStar().getPosX() > entity.getStarProperties().getPosX()) {
                                                             diff = entity.getStarProperties().getPosX() - this.getCurrentStar().getPosX();
+                                                            flip = true;
                                                         } else {
                                                             diff = this.getCurrentStar().getPosX() - entity.getStarProperties().getPosX();
                                                         }
-                                                        equivX += (diff * 0.01);
+                                                        if (flip) diff *= -1;
+                                                        equivX += (diff * 0.06);
                                                         diff = 0;
+                                                        flip = false;
                                                         if (this.getCurrentStar().getPosZ() > entity.getStarProperties().getPosZ()) {
                                                             diff = entity.getStarProperties().getPosZ() - this.getCurrentStar().getPosZ();
+                                                            flip = true;
                                                         } else {
                                                             diff = this.getCurrentStar().getPosZ() - entity.getStarProperties().getPosZ();
                                                         }
-                                                        equivZ += (diff * 0.01);
+                                                        if (flip) diff *= -1;
+                                                        equivZ += (diff * 0.06);
                                                         try {
-                                                            equivY += TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0005;
+                                                            equivY += TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.001;
                                                         } catch (Exception e) {
                                                             equivY += 30;
                                                         }
