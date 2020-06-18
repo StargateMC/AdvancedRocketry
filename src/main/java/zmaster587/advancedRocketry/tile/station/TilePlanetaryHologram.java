@@ -118,8 +118,27 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
 
 					if(stellarMode) {
 						for(EntityUIStar entity : starEntities) {
-							entity.setPosition(this.pos.getX() + .5 + getInterpHologramSize()*entity.getStarProperties().getPosX()/100f, this.pos.getY() + 1, this.pos.getZ() + .5 + getInterpHologramSize()*entity.getStarProperties().getPosZ()/100f);
-							entity.setScale(getInterpHologramSize());
+                                                    double equivX = entity.getStarProperties().getPosX();
+                                                    double equivZ = entity.getStarProperties().getPosZ();
+                                                    System.out.println(entity.getStarProperties().getName() + " before x: " + equivX);
+                                                    System.out.println(entity.getStarProperties().getName() + " before z: " + equivZ);
+                                                    double equivY = 1;
+                                                    
+                                                    while (equivX > 500) equivX -= 1000;
+                                                    while (equivZ > 500) equivZ -= 1000;
+                                                    while (equivX < -500) equivX += 1000;
+                                                    while (equivZ < -500) equivZ += 1000;
+                                                    System.out.println(entity.getStarProperties().getName() + " after x: " + equivX);
+                                                    System.out.println(entity.getStarProperties().getName() + " after z: " + equivZ);
+                                                    if (entity.getStarProperties().getName().endsWith("ML")) equivY = 3;
+                                                    if (entity.getStarProperties().getName().endsWith("OL")) equivY = 5;
+                                                    if (entity.getStarProperties().getName().endsWith("IL")) equivY = 7;
+                                                    if (entity.getStarProperties().getName().endsWith("HO")) equivY = 9;
+                                                    if (entity.getStarProperties().getName().endsWith("1D")) equivY = 11;
+                                                    
+                                                    entity.setPosition(this.pos.getX() + .5 + getInterpHologramSize()*equivX/100f, this.pos.getY() + equivY, this.pos.getZ() + .5 + getInterpHologramSize()*equivZ/100f);
+                                                    System.out.println(entity.getStarProperties().getName() + " afterPos: " + entity.getPosition().toString());
+                                                    entity.setScale(getInterpHologramSize());
 						}
 					}
 					else {
@@ -261,6 +280,7 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
 						double deltaX, deltaY;
 						deltaX =  (body.getStarSeparation()*MathHelper.cos(phase)*0.05);
 						deltaY =  (body.getStarSeparation()*MathHelper.sin(phase)*0.05);
+                                                
 						EntityUIStar entity = new EntityUIStar(world, body, count++, this, this.pos.getX() + .5 + deltaX, this.pos.getY() + 1, this.pos.getZ() + .5 + deltaY);
 
 						this.getWorld().spawnEntity(entity);
