@@ -261,7 +261,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 				if(world.isRemote) {
 					warpFuel.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuelcost") + (flag ? String.valueOf(warpCost) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? getSpaceObject().getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
-					eta.setText("ETA: " + (getSpaceObject().getTransitionTime() != -1 ? getEnglishTimeFromMs(getSpaceObject().getTransitionTime() - System.currentTimeMillis()) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
+					eta.setText("ETA: " + (getSpaceObject().getTransitionTime() != -1 ? getEnglishTimeFromMs(getSpaceObject().getTransitionTime() - System.currentTimeMillis()) + " (" + getSpeed(player) + ")" : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					modules.add(warpFuel);
 					modules.add(warpCapacity);
                                         modules.add(eta);
@@ -471,6 +471,20 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		}
 	}
 
+        public static String getSpeed(EntityPlayer player) {
+                switch (CoreAPI.getContributorTier(player)) {
+                    case 4:
+                        return "+40%";
+                    case 3:
+                        return "+25%";
+                    case 2:
+                        return "+15%";
+                    case 1:
+                        return "+5%";
+                    default:
+                        return "+0%";
+                }
+        }
         public static double getTravelTimeMultiplier(EntityPlayer player) {
                 switch (CoreAPI.getContributorTier(player)) {
                     case 4:
@@ -508,7 +522,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			final SpaceStationObject station = getSpaceObject();
 
 			if(station != null && station.hasUsableWarpCore() && station.useFuel(getTravelCost()) != 0 && meetsArtifactReq(DimensionManager.getInstance().getDimensionProperties(station.getDestOrbitingBody()))) {
-				SpaceObjectManager.getSpaceManager().moveStationToBody(station, station.getDestOrbitingBody(), Math.max(Math.min(getTravelCost()*5, 5000) * getTravelTimeMultiplier(player),0));
+				SpaceObjectManager.getSpaceManager().moveStationToBody(station, station.getDestOrbitingBody(), (int)Math.max((Math.min(getTravelCost()*5, 5000) * getTravelTimeMultiplier(player)),0));
 
 				for (EntityPlayer player2 : world.getPlayers(EntityPlayer.class, new Predicate<EntityPlayer>() {
 					public boolean apply(EntityPlayer input) {
