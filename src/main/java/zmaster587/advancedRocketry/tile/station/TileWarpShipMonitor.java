@@ -91,7 +91,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		return station;
 	}
         public static double distance(BlockPos pos1, BlockPos pos2) {
-            return distance(pos1.getX(),pos1.getY(),pos2.getZ(),pos2.getX(),pos2.getY(),pos2.getZ());
+            return distance(pos1.getX(),pos1.getY(),pos1.getZ(),pos2.getX(),pos2.getY(),pos2.getZ());
         }
         public static double distanceBetweenDimProps(DimensionProperties props1, DimensionProperties props2) {
             double x1 = props1.orbitalDist*Math.cos((float) props1.orbitTheta);
