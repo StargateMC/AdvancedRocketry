@@ -136,6 +136,11 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
                                                     double equivX = entity.getStarProperties().getPosX();
                                                     double equivZ = entity.getStarProperties().getPosZ();
                                                     double equivY = 1;
+                                                    if (equivX > 0 && equivX < 250) equivX -= (Math.abs(equivX)/2);
+                                                    if (equivX < 0 && equivX > -250) equivX += (Math.abs(equivX)/2);
+                                                    if (equivZ > 0 && equivZ < 250) equivZ -= (Math.abs(equivZ)/2);
+                                                    if (equivZ < 0 && equivZ > -250) equivZ += (Math.abs(equivZ)/2);
+                                                    
                                                     while (equivX > 250) equivX -= 500;
                                                     while (equivZ > 250) equivZ -= 500;
                                                     while (equivX < -250) equivX += 500;
