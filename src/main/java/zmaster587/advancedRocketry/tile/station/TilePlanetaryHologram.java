@@ -143,6 +143,8 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
                                                     while (equivZ < -500) equivZ += 1000;
                                                     if (this.getCurrentStar() != null) {
                                                         if (!this.getCurrentStar().getName().substring(7,9).equals(entity.getStarProperties().getName().substring(7,9))) {
+                                                            equivX /= 2; // Halve display size of other galaxies.
+                                                            equivZ /= 2;
                                                             if (this.getCurrentStar().getPosX() > entity.getStarProperties().getPosX()) {
                                                                 equivX -= 500;
                                                             } else {
@@ -154,7 +156,7 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
                                                                 equivZ += 500;
                                                             }
                                                             try {
-                                                                equivY += TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0005;
+                                                                equivY += TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0003;
                                                             } catch (Exception e) {
                                                                 equivY += 30;
                                                             }
