@@ -261,7 +261,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 				if(world.isRemote) {
 					warpFuel.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuelcost") + (flag ? String.valueOf(warpCost) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					warpCapacity.setText(LibVulpes.proxy.getLocalizedString("msg.warpmon.fuel") + (isOnStation ? getSpaceObject().getFuelAmount() : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
-					eta.setText("ETA: " + (getSpaceObject().getTransitionTime() != -1 ? getEnglishTimeFromMs(getSpaceObject().getTransitionTime() - System.currentTimeMillis()) + " (" + getSpeed(player) + ")" : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
+					eta.setText("ETA: " + (getSpaceObject().getTransitionTime() != -1 ? getEnglishTimeFromMs(getSpaceObject().getTransitionTime() - System.currentTimeMillis()) : LibVulpes.proxy.getLocalizedString("msg.warpmon.na")));
 					modules.add(warpFuel);
 					modules.add(warpCapacity);
                                         modules.add(eta);
