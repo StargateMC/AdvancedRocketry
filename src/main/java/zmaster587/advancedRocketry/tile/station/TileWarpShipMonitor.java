@@ -473,8 +473,12 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 
         public static String getSpeed(EntityPlayer player) {
                 switch (CoreAPI.getContributorTier(player)) {
+                    case 6:
+                        return "+100%";
+                    case 5:
+                        return "+75%";
                     case 4:
-                        return "+40%";
+                        return "+50%";
                     case 3:
                         return "+25%";
                     case 2:
@@ -487,16 +491,20 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
         }
         public static double getTravelTimeMultiplier(EntityPlayer player) {
                 switch (CoreAPI.getContributorTier(player)) {
+                    case 6:
+                        return 0.5; // Divide by two to double speed.
+                    case 5:
+                        return 0.625; 
                     case 4:
-                        return 0.60;
+                        return 0.75; // 0.5 is 50% of normal time, which is 100%
                     case 3:
-                        return 0.75;
+                        return 0.875; // 0.75 is 75% of normal time, so therfore 25% increase
                     case 2:
-                        return 0.85;
+                        return 0.925; // 0.85 is 85% of normal time, so therefore 15% increase
                     case 1:
-                        return 0.95;
+                        return 0.95; // 0.95 is 95% of normal time, so therefore 5% increase
                     default:
-                        return 1.0;
+                        return 1.0; // 1.0 is normal speed.
                 }
         }
         
