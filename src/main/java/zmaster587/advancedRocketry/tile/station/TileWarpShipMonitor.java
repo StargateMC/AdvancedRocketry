@@ -1,6 +1,7 @@
 package zmaster587.advancedRocketry.tile.station;
 
 import com.google.common.base.Predicate;
+import com.stargatemc.api.CoreAPI;
 import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import net.minecraft.entity.player.EntityPlayer;
@@ -470,6 +471,21 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		}
 	}
 
+        public static double getTravelTimeMultiplier(EntityPlayer player) {
+                switch (CoreAPI.getContributorTier(player)) {
+                    case 4:
+                        return 0.60;
+                    case 3:
+                        return 0.75;
+                    case 2:
+                        return 0.85;
+                    case 1:
+                        return 0.95;
+                    default:
+                        return 1.0;
+                }
+        }
+        
 	@Override
 	public void useNetworkData(EntityPlayer player, Side side, byte id,
 			NBTTagCompound nbt) {
@@ -492,7 +508,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			final SpaceStationObject station = getSpaceObject();
 
 			if(station != null && station.hasUsableWarpCore() && station.useFuel(getTravelCost()) != 0 && meetsArtifactReq(DimensionManager.getInstance().getDimensionProperties(station.getDestOrbitingBody()))) {
-				SpaceObjectManager.getSpaceManager().moveStationToBody(station, station.getDestOrbitingBody(), Math.max(Math.min(getTravelCost()*5, 5000),0));
+				SpaceObjectManager.getSpaceManager().moveStationToBody(station, station.getDestOrbitingBody(), Math.max(Math.min(getTravelCost()*5, 5000) * getTravelTimeMultiplier(player),0));
 
 				for (EntityPlayer player2 : world.getPlayers(EntityPlayer.class, new Predicate<EntityPlayer>() {
 					public boolean apply(EntityPlayer input) {
