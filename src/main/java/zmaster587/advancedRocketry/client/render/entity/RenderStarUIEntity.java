@@ -53,7 +53,11 @@ public class RenderStarUIEntity extends Render<EntityUIStar> implements IRenderF
 		GL11.glScalef(sizeScale,sizeScale,sizeScale);
 		
 		RenderHelper.setupPlayerFacingMatrix(Minecraft.getMinecraft().player.getDistanceSqToEntity(entity), 0,-.45,0);
-		Minecraft.getMinecraft().renderEngine.bindTexture(TextureResources.locationSunNew);
+		if (entity.getStarProperties().isBlackHole()) {
+                    Minecraft.getMinecraft().renderEngine.bindTexture(TextureResources.locationBlackHole);
+                } else {
+                    Minecraft.getMinecraft().renderEngine.bindTexture(TextureResources.locationSunNew);
+                }
 		
 		BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 		
