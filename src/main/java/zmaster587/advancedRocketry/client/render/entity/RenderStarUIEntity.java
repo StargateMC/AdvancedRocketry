@@ -54,7 +54,7 @@ public class RenderStarUIEntity extends Render<EntityUIStar> implements IRenderF
 		
 		RenderHelper.setupPlayerFacingMatrix(Minecraft.getMinecraft().player.getDistanceSqToEntity(entity), 0,-.45,0);
 		if (entity.getStarProperties().isBlackHole()) {
-                    Minecraft.getMinecraft().renderEngine.bindTexture(TextureResources.locationBlackHole);
+                    Minecraft.getMinecraft().renderEngine.bindTexture(TextureResources.locationBlackHole_icon);
                 } else {
                     Minecraft.getMinecraft().renderEngine.bindTexture(TextureResources.locationSunNew);
                 }
