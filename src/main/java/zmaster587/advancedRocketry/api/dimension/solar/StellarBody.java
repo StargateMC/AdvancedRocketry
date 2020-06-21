@@ -244,7 +244,7 @@ public class StellarBody {
 		nbt.setString("name", name);
 		nbt.setInteger("posX", posX);
 		nbt.setInteger("posZ", posZ);
-		nbt.setShort("size", size);
+		nbt.setFloat("size", size);
 		nbt.setFloat("seperation", starSeperation);
 		nbt.setBoolean("isBlackHole", isBlackHole);
 		
