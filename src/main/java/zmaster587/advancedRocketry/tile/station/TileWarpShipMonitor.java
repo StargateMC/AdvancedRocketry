@@ -102,7 +102,16 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
             return Math.max((int)Math.sqrt(Math.pow((x1 - x2),2) + Math.pow((y1 - y2),2)),1);
         }
         public static double distance(double sx, double sy, double sz, double dx, double dy, double dz) {
-            double distance = Math.sqrt(Math.pow((dx-sx),2) + Math.pow((dy-sy),2) + Math.pow((dz-sz),2));
+            double diffx = 0.0;
+            if (sx >= dx) diffx = sx - dx;
+            if (dx > sx) diffx = dx - sx;
+            double diffy = 0.0;
+            if (sy >= dy) diffy = sy - dy;
+            if (dy > sy) diffy = dy - sy;
+            double diffz = 0.0;
+            if (sz >= dz) diffz = sz - dz;
+            if (dz > sz) diffz = dz - sz;
+            double distance = Math.sqrt(Math.pow(diffx,2) + Math.pow(diffy,2) + Math.pow(diffz,2));
             return distance;
         }
         public static double distanceBetweenStars(StellarBody body1, StellarBody body2) {
