@@ -596,6 +596,7 @@ public class XMLPlanetLoader {
 			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
 				try {
 					star.setPosX(Integer.parseInt(nameNode.getNodeValue()));
+					AdvancedRocketry.logger.info("Loading Star " + star.getName() + ", POSX: " + star.getPosX() + " from: " + nameNode.getNodeValue());
 				} catch (NumberFormatException e) {
 					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
 				}
@@ -606,6 +607,7 @@ public class XMLPlanetLoader {
 			if(nameNode != null && !nameNode.getNodeValue().isEmpty()) {
 				try {
 					star.setPosZ(Integer.parseInt(nameNode.getNodeValue()));
+					AdvancedRocketry.logger.info("Loading Star " + star.getName() + ", POSZ: " + star.getPosZ() + " from: " + nameNode.getNodeValue());
 				} catch (NumberFormatException e) {
 					AdvancedRocketry.logger.warn("Error Reading star " + star.getName());
 				}

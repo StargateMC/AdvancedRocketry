@@ -27,7 +27,7 @@ public class StellarBody {
 	int id;
 	float size;
 	String name;
-	short posX, posZ;
+	int posX, posZ;
 	public List<StellarBody> subStars;
 	float starSeperation;
 	private boolean isBlackHole;
@@ -83,7 +83,7 @@ public class StellarBody {
 	}
 
 	public void setPosX(int x) {
-		posX = (short)x;
+		posX = x;
 	}
         
         public double stellarDistanceFrom(World w, BlockPos pos) {
@@ -96,7 +96,7 @@ public class StellarBody {
         }
 
 	public void setPosZ(int x) {
-		posZ = (short)x;
+		posZ = x;
 	}
 
 	public int getPosX() {
@@ -242,9 +242,9 @@ public class StellarBody {
 		nbt.setInteger("id", this.id);
 		nbt.setInteger("temperature", temperature);
 		nbt.setString("name", name);
-		nbt.setShort("posX", posX);
-		nbt.setShort("posZ", posZ);
-		nbt.setFloat("size", size);
+		nbt.setInteger("posX", posX);
+		nbt.setInteger("posZ", posZ);
+		nbt.setShort("size", size);
 		nbt.setFloat("seperation", starSeperation);
 		nbt.setBoolean("isBlackHole", isBlackHole);
 		
@@ -264,8 +264,8 @@ public class StellarBody {
 		id = nbt.getInteger("id");
 		temperature = nbt.getInteger("temperature");
 		name = nbt.getString("name");
-		posX = nbt.getShort("posX");
-		posZ = nbt.getShort("posZ");
+		posX = nbt.getInteger("posX");
+		posZ = nbt.getInteger("posZ");
 		isBlackHole = nbt.getBoolean("isBlackHole");
 		
 		if(nbt.hasKey("size"))
