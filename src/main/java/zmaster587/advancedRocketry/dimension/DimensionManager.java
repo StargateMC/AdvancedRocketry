@@ -159,7 +159,6 @@ public class DimensionManager implements IGalaxy {
             Set<Integer> s2 = new HashSet<Integer>(Arrays.asList(net.minecraftforge.common.DimensionManager.getIDs()));
             s1.retainAll(s2);
             return s1.toArray(new Integer[s1.size()]);
-            return getRegisteredDimensions();
 	}
 
 	/**
