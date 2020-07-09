@@ -71,16 +71,17 @@ public class TileWarpCore extends TileMultiBlock {
 				int amt = 0;
 				if(stack != null && OreDictionary.itemMatches(MaterialRegistry.getItemStackFromMaterialAndType("Dilithium", AllowedProducts.getProductByName("GEM")), stack, false)) {
 					int stackSize = stack.getCount();
+                                        int currentFuel = getSpaceObject().getFuelAmount();
+                                        int max = getSpaceObject().getMaxFuelAmount();
+                                        int maxFill = max - currentFuel;
+                                        int maxStack = maxFill / ARConfiguration.getCurrentConfig().fuelPointsPerDilithium;
+                                        int numUsed = Math.min(stackSize,maxStack);
 					if(!world.isRemote)
 						amt = getSpaceObject().addFuel(ARConfiguration.getCurrentConfig().fuelPointsPerDilithium*stack.getCount());
 					else
-						amt = Math.min(getSpaceObject().getFuelAmount() + 10*stack.getCount(), getSpaceObject().getMaxFuelAmount()) - getSpaceObject().getFuelAmount();//
-					inv.decrStackSize(i, amt/10);
+						amt = getSpaceObject().getFuelAmount() + (numUsed*ARConfiguration.getCurrentConfig().fuelPointsPerDilithium);
+					inv.decrStackSize(i, numUsed);
 					inv.markDirty();
-					
-					//If full
-					if(stackSize/10 != amt)
-						return;
 				}
 			}
 		}
