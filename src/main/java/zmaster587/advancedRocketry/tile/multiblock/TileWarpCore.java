@@ -74,6 +74,7 @@ public class TileWarpCore extends TileMultiBlock {
                                         int currentFuel = getSpaceObject().getFuelAmount();
                                         int max = getSpaceObject().getMaxFuelAmount();
                                         int maxFill = max - currentFuel;
+                                        if (maxFill <= ARConfiguration.getCurrentConfig().fuelPointsPerDilithium) return;
                                         int maxStack = maxFill / ARConfiguration.getCurrentConfig().fuelPointsPerDilithium;
                                         int numUsed = Math.min(stackSize,maxStack);
 					if(!world.isRemote)
