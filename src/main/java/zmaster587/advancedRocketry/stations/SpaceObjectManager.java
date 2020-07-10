@@ -312,21 +312,6 @@ public class SpaceObjectManager implements ISpaceObjectManager {
 
 			nextStationTransitionTick = newNextTransitionTick;
 		}
-                for (ISpaceObject so : this.getSpaceObjects()) {
-                    if (so instanceof SpaceStationObject) {
-                        DimensionProperties orbiting = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(so.getOrbitingPlanetId());
-                        if (orbiting == null) continue;
-                        if (!((SpaceStationObject) so).isPlanetKnown(orbiting)) {
-                            ((SpaceStationObject) so).discoverPlanet(so.getOrbitingPlanetId());                
-                            if (((SpaceStationObject) so).isPlanetKnown(orbiting) && orbiting.hasChildren()) {
-                                for (int id : orbiting.getChildPlanets()) {
-                                    ((SpaceStationObject) so).discoverPlanet(id);                      
-                                }
-                            }
-                        }            
-                    }
-                
-                }
 	}
 	
 	public void onServerStopped() {
