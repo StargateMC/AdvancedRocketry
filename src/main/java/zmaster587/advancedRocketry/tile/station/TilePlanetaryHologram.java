@@ -156,7 +156,7 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
                                                                 equivZ += 500;
                                                             }
                                                             try {
-                                                                equivY += Math.max(8,TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0001);
+                                                                equivY += Math.min(8,TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0001);
                                                             } catch (Exception e) {
                                                                 equivY += 30;
                                                             }

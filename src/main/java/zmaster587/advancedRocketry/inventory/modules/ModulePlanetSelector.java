@@ -74,7 +74,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		this.planetDefiner = definer;
 		hostTile = tile;
 		int center = size/2;
-		zoom = 1.0;
+		zoom = 2.0;
 
 		planetList = new ArrayList<ModuleButton>();
 		moduleList = new ArrayList<ModuleBase>();
@@ -174,12 +174,12 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
                                 realStarZ += 1500;
                             }
                             if (star.getName().endsWith("HO")) {
-                                realStarX += 3250;
-                                realStarZ += 3250;
+                                realStarX += 4500;
+                                realStarZ += 4500;
                             }
                             if (star.getName().endsWith("1D")) {
-                                realStarX -= 3250;
-                                realStarZ -= 3250;
+                                realStarX -= 4500;
+                                realStarZ -= 4500;
                             }
                         }
 			int offsetX = (realStarX/5) + (posX) - displaySize/2; 
