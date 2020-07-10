@@ -154,8 +154,14 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 				continue;
 
 			int displaySize = (int)(planetSizeMultiplier*star.getDisplayRadius())/5;
-			int offsetX = (star.getPosX()/5) + (posX) - displaySize/2; 
-			int offsetY = (star.getPosZ()/5) + (posY) - displaySize/2;
+                        int realStarX = star.getPosX();
+                        int realStarZ = star.getPosZ();
+                        while (realStarX > 2000) realStarX -= 2000;
+                        while (realStarZ > 2000) realStarZ -= 2000;
+                        while (realStarX < -2000) realStarX += 2000;
+                        while (realStarZ < -2000) realStarZ += 2000;
+			int offsetX = (realStarX/5) + (posX) - displaySize/2; 
+			int offsetY = (realStarZ/5) + (posY) - displaySize/2;
 			ModuleButton button;
 			
 			if(star.getSubStars() != null && !star.getSubStars().isEmpty()) {
