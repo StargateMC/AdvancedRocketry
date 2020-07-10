@@ -157,7 +157,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
                         int realStarX = star.getPosX();
                         int realStarZ = star.getPosZ();
                         while (realStarX > 500) realStarX -= 500;
-                        while (realStarZ > 500) realStarZ -= 2000;
+                        while (realStarZ > 500) realStarZ -= 500;
                         while (realStarX < -500) realStarX += 500;
                         while (realStarZ < -500) realStarZ += 500;
                         if (!star.getName().endsWith("PL")) {
