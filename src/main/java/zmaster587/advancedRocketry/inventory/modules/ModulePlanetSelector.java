@@ -156,34 +156,30 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 			int displaySize = (int)(planetSizeMultiplier*star.getDisplayRadius())/5;
                         int realStarX = star.getPosX();
                         int realStarZ = star.getPosZ();
-                        while (realStarX > 500) realStarX -= 500;
-                        while (realStarZ > 500) realStarZ -= 500;
-                        while (realStarX < -500) realStarX += 500;
-                        while (realStarZ < -500) realStarZ += 500;
+                        while (realStarX > 1000) realStarX -= 1000;
+                        while (realStarZ > 1000) realStarZ -= 1000;
+                        while (realStarX < -1000) realStarX += 1000;
+                        while (realStarZ < -1000) realStarZ += 1000;
                         if (!star.getName().endsWith("PL")) {
                             if (star.getName().endsWith("ML")) {
-                                realStarX += 750;
-                                realStarZ += 750;
+                                realStarX += 1500;
+                                realStarZ += 1500;
                             }
                             if (star.getName().endsWith("IL")) {
-                                realStarX -= 750;
-                                realStarZ -= 750;
-                            }
-                            if (star.getName().endsWith("IL")) {
-                                realStarX -= 750;
-                                realStarZ += 750;
+                                realStarX -= 1500;
+                                realStarZ -= 1500;
                             }
                             if (star.getName().endsWith("OL")) {
-                                realStarX -= 750;
-                                realStarZ += 750;
+                                realStarX -= 1500;
+                                realStarZ += 1500;
                             }
                             if (star.getName().endsWith("HO")) {
-                                realStarX += 1750;
-                                realStarZ += 1750;
+                                realStarX += 3250;
+                                realStarZ += 3250;
                             }
                             if (star.getName().endsWith("1D")) {
-                                realStarX -= 1750;
-                                realStarZ -= 1750;
+                                realStarX -= 3250;
+                                realStarZ -= 3250;
                             }
                         }
 			int offsetX = (realStarX/5) + (posX) - displaySize/2; 
