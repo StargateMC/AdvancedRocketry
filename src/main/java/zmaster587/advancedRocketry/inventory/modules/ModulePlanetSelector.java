@@ -49,7 +49,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		}
 	}
 
-	private static final int size = 100000;
+	private static final int size = 2000;
 	private int topLevel;
 	ISelectionNotify hostTile;
 	private int currentSystem, selectedSystem;
@@ -156,10 +156,10 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 			int displaySize = (int)(planetSizeMultiplier*star.getDisplayRadius())/5;
                         int realStarX = star.getPosX();
                         int realStarZ = star.getPosZ();
-                        while (realStarX > 2000) realStarX -= 2000;
-                        while (realStarZ > 2000) realStarZ -= 2000;
-                        while (realStarX < -2000) realStarX += 2000;
-                        while (realStarZ < -2000) realStarZ += 2000;
+                        while (realStarX > 1000) realStarX -= 1000;
+                        while (realStarZ > 1000) realStarZ -= 1000;
+                        while (realStarX < -1000) realStarX += 1000;
+                        while (realStarZ < -1000) realStarZ += 1000;
 			int offsetX = (realStarX/5) + (posX) - displaySize/2; 
 			int offsetY = (realStarZ/5) + (posY) - displaySize/2;
 			ModuleButton button;
