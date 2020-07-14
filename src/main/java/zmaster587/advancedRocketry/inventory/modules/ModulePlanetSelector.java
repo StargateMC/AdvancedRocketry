@@ -288,7 +288,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 
 		for(Integer childId : planet.getChildPlanets()) {
 			DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(childId);
-			if (properties.getId() == -2 || properties.getId() == 0) continue;
+			if (properties.getName().equals("Space") || properties.getName().equals("Earth")) continue;
 			if(planetDefiner != null && !planetDefiner.isPlanetKnown(properties))
 				continue;
 			
