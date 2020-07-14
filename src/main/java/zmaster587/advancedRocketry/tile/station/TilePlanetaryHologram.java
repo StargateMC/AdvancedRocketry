@@ -141,37 +141,7 @@ public class TilePlanetaryHologram extends TileEntity implements ITickable,IButt
                                                     while (equivZ > 500) equivZ -= 1000;
                                                     while (equivX < -500) equivX += 1000;
                                                     while (equivZ < -500) equivZ += 1000;
-                                                    if (this.getCurrentStar() != null) {
-                                                        if (!this.getCurrentStar().getName().substring(7,9).equals(entity.getStarProperties().getName().substring(7,9))) {
-                                                            equivX /= 2; // Halve display size of other galaxies.
-                                                            equivZ /= 2;
-                                                            if (this.getCurrentStar().getPosX() > entity.getStarProperties().getPosX()) {
-                                                                equivX -= 500;
-                                                            } else {
-                                                                equivX += 500;
-                                                            }
-                                                            if (this.getCurrentStar().getPosZ() > entity.getStarProperties().getPosZ()) {
-                                                                equivZ -= 500;
-                                                            } else {
-                                                                equivZ += 500;
-                                                            }
-                                                            try {
-                                                                equivY += Math.min(8,TileWarpShipMonitor.distanceBetweenStars(this.getCurrentStar(),entity.getStarProperties()) * 0.0001);
-                                                            } catch (Exception e) {
-                                                                equivY += 30;
-                                                            }
-                                                        }
-                                                    } else {
-                                                        if (entity.getStarProperties().getName().endsWith("ML")) equivY = 3;
-                                                        if (entity.getStarProperties().getName().endsWith("OL")) equivY = 5;
-                                                        if (entity.getStarProperties().getName().endsWith("IL")) equivY = 7;
-                                                        if (entity.getStarProperties().getName().endsWith("HO")) equivY = 9;
-                                                        if (entity.getStarProperties().getName().endsWith("1D")) equivY = 11;
-                                                        float randomY = r.nextFloat();
-                                                        if (r.nextBoolean()) randomY *= -1;
-                                                        equivY += randomY;
-                                                    }
-                                                    
+                                                    if (this.getCurrentStar() == null || !this.getCurrentStar().getName().substring(7,9).equals(entity.getStarProperties().getName().substring(7,9))) continue;
                                                     entity.setPosition(this.pos.getX() + .5 + getInterpHologramSize()*equivX/100f, this.pos.getY() + equivY, this.pos.getZ() + .5 + getInterpHologramSize()*equivZ/100f);
                                                     entity.setScale(getInterpHologramSize());
 						}
