@@ -124,6 +124,9 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
             if (props1 != null && props2 != null) {
                 if (props1 != props2) distance += (0.005 * distanceBetweenDimProps(props1,props2)); // Distance relative to star from eachother.
                 if (props1.getStar() != props2.getStar()) distance += (distanceBetweenStars(props1.getStar(), props2.getStar())); // Interstellar.
+                System.out.println("Distance between : " + props1.getName() + " and " + props2.getName() + " is: " + distance);
+            } else {
+                System.out.println("Distance between : " + dim1 + " and " + dim2 + " could not be calculated!");
             }
             return distance;
         }
@@ -133,6 +136,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			DimensionProperties properties = getSpaceObject().getProperties().getParentProperties();
 
 			DimensionProperties destProperties = DimensionManager.getInstance().getDimensionProperties(getSpaceObject().getDestOrbitingBody());
+                        System.out.println("Returning distance as fuel cost: " + (int)TileWarpShipMonitor.distanceBetweenDimensions(properties.getId(), destProperties.getId()));
                         return (int)TileWarpShipMonitor.distanceBetweenDimensions(properties.getId(), destProperties.getId());
 		}
 		return Integer.MAX_VALUE;
@@ -539,7 +543,8 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			final SpaceStationObject station = getSpaceObject();
 
 			if(station != null && station.hasUsableWarpCore() && station.useFuel(getTravelCost()) != 0 && meetsArtifactReq(DimensionManager.getInstance().getDimensionProperties(station.getDestOrbitingBody()))) {
-				SpaceObjectManager.getSpaceManager().moveStationToBody(station, station.getDestOrbitingBody(), (int)Math.max((Math.min(getTravelCost()*5, 5000) * getTravelTimeMultiplier(player)),0));
+				System.out.println("Station : " + station.getId() + " is travelling to : " + station.getDestOrbitingBody() + " and will arrive in : " + TileWarpShipMonitor.getEnglishTimeFromMs((long)Math.max((Math.min(getTravelCost()*5, 5000) * getTravelTimeMultiplier(player)),0)));
+                                SpaceObjectManager.getSpaceManager().moveStationToBody(station, station.getDestOrbitingBody(), (int)Math.max((Math.min(getTravelCost()*5, 5000) * getTravelTimeMultiplier(player)),0));
 
 				for (EntityPlayer player2 : world.getPlayers(EntityPlayer.class, new Predicate<EntityPlayer>() {
 					public boolean apply(EntityPlayer input) {
