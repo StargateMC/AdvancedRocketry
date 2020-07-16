@@ -838,7 +838,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 	 * @return true if the planet should be rendered with shadows, atmosphere glow, clouds, etc
 	 */
 	public boolean hasDecorators() {
-		return !isAsteroid() && !isStar() || (canDecorate && overrideDecoration);
+		return !isAsteroid() && (!isStar() || !hasBlackHole()) || (canDecorate && overrideDecoration);
 	}
 	
 	public void setDecoratoration(boolean value)
