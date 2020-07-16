@@ -426,8 +426,6 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
                                 planetName = properties.getName();
                                 dstProps = properties;
                             } else {
-                                if (dstPlanet == 0 || dstPlanet == SpaceObjectManager.WARPDIMID || dstPlanet == Constants.INVALID_PLANET)
-                                    dstPlanet = station.getOrbitingPlanetId();
                                 DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(dstPlanet);
                                 location = properties;
                                 planetName = properties.getName();
