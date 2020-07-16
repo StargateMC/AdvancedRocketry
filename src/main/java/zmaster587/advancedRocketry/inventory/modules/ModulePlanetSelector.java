@@ -543,7 +543,7 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 		//Confirm selection
 		else if(buttonId == Constants.INVALID_PLANET + 1) {
 			DimensionProperties properties =  DimensionManager.getInstance().getDimensionProperties(selectedSystem);
-			if(selectedSystem < Constants.STAR_ID_OFFSET || (this.allowStarSelection && properties.getStar().isBlackHole())) {
+			if(selectedSystem < Constants.STAR_ID_OFFSET || (this.allowStarSelection)) {
 				hostTile.onSelectionConfirmed(this);
 				Minecraft.getMinecraft().player.closeScreen();
 			}
