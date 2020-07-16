@@ -340,8 +340,8 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 
 		ISpaceObject station = getSpaceObject();
 		boolean isOnStation = station != null;
-		DimensionProperties location;
-		String planetName;
+		DimensionProperties location = null;
+		String planetName = null;
 
 		if(isOnStation) {
 			DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(station.getOrbitingPlanetId());
@@ -349,13 +349,11 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			planetName = properties.getName();
 		}
 		else {
-			location = DimensionManager.getInstance().getDimensionProperties(world.provider.getDimension());
-			planetName = DimensionManager.getInstance().getDimensionProperties(world.provider.getDimension()).getName();
-                        if (location == null || planetName.isEmpty()) {
+                        if (location == null || planetName == null) {
                             location = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody());
                             planetName = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody()).getName();
                         }
-			if(planetName.isEmpty())
+			if(planetName == null)
 				planetName = "???";
 		}
 
@@ -411,7 +409,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 
 
 			DimensionProperties dstProps = null;
-			if(isOnStation && station.getOrbitingPlanetId() != SpaceObjectManager.WARPDIMID )
+			if(isOnStation)
 				dstProps = DimensionManager.getInstance().getDimensionProperties(dstPlanet);
 
 			if(dstProps != null) {
