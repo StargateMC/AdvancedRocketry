@@ -609,6 +609,8 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		Temps tempType = Temps.getTempFromValue(getAverageTemp());
 
 
+                if (isStar())
+                    return TextureResources.locationSunNew;
 		if(isGasGiant())
 			return PlanetIcons.GASGIANTBLUE.resourceLEO;
 
