@@ -48,6 +48,16 @@ public interface ISpaceObject {
 	public void setSpawnLocation(int x, int y, int z);
 	
 	/**
+	 * Sets the previous orbiting body of a station
+	 * @param id
+	 */
+	public void setPrevOrbitingBody(int id);
+	/**
+	 * Sets the previous orbiting body of a station
+	 * @param id
+	 */
+	public int getPrevOrbitingBody();
+	/**
 	 * Sets the orbiting planet for the space object but does NOT register it with the planet
 	 * @param id
 	 */

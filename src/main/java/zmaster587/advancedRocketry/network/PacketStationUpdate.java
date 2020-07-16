@@ -23,6 +23,7 @@ public class PacketStationUpdate extends BasePacket {
 	Type type;
 	
 	int destOrbitingBody;
+        int prevOrbitingBody;
 	int fuel;
 	double rx,ry,rz,drx,dry,drz;
 	float orbitalDistance;
@@ -30,6 +31,7 @@ public class PacketStationUpdate extends BasePacket {
 
 	public enum Type {
 		DEST_ORBIT_UPDATE,
+		SOURCE_ORBIT_UPDATE,
 		ORBIT_UPDATE,
 		SIGNAL_WHITE_BURST,
 		FUEL_UPDATE,
@@ -52,6 +54,9 @@ public class PacketStationUpdate extends BasePacket {
 		out.writeInt(type.ordinal());
 
 		switch(type) {
+                    case SOURCE_ORBIT_UPDATE:
+			out.writeInt(spaceObject.getPrevOrbitingBody());
+			break;
 		case DEST_ORBIT_UPDATE:
 			out.writeInt(spaceObject.getDestOrbitingBody());
 			break;
@@ -95,6 +100,9 @@ public class PacketStationUpdate extends BasePacket {
 
 
 		switch(type) {
+		case SOURCE_ORBIT_UPDATE:
+			prevOrbitingBody = in.readInt();
+			break;
 		case DEST_ORBIT_UPDATE:
 			destOrbitingBody = in.readInt();
 			break;
@@ -141,6 +149,9 @@ public class PacketStationUpdate extends BasePacket {
 		spaceObject = SpaceObjectManager.getSpaceManager().getSpaceStation(stationNumber);
 		
 		switch(type) {
+		case SOURCE_ORBIT_UPDATE:
+			spaceObject.setPrevOrbitingBody(this.prevOrbitingBody);
+			break;
 		case DEST_ORBIT_UPDATE:
 			spaceObject.setDestOrbitingBody(destOrbitingBody );
 			break;

@@ -21,6 +21,7 @@ public class SpaceObjectAsteroid extends SpaceObjectBase implements IDataHandler
 	int numberOfBlocks;
 	long uuid;
 	MultiData data;
+    private int prevBody;
 	
 	public SpaceObjectAsteroid() {
 		data = new MultiData();
@@ -124,4 +125,14 @@ public class SpaceObjectAsteroid extends SpaceObjectBase implements IDataHandler
 	@Override
 	public void setOrbitalDistance(float finalVel) {
 	}
+
+    @Override
+    public void setPrevOrbitingBody(int id) {
+        this.prevBody = id;
+    }
+
+    @Override
+    public int getPrevOrbitingBody() {
+        return this.prevBody;
+    }
 }

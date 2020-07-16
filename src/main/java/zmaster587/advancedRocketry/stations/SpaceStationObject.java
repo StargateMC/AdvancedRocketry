@@ -56,6 +56,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 	private long lastTimeModification = 0;
 	private DimensionProperties properties;
 	public boolean hasWarpCores = false;
+    private int sourceDimId;
 
 	public SpaceStationObject() {
 		properties = (DimensionProperties) zmaster587.advancedRocketry.dimension.DimensionManager.defaultSpaceDimensionProperties.clone();
@@ -783,4 +784,17 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 	public boolean isStarKnown(StellarBody body) {
 		return true;
 	}
+
+    @Override
+    public void setPrevOrbitingBody(int id) {
+        this.sourceDimId = id;
+        if(FMLCommonHandler.instance().getSide().isServer()) {
+                PacketHandler.sendToAll(new PacketStationUpdate(this, PacketStationUpdate.Type.SOURCE_ORBIT_UPDATE));
+        }
+    }
+
+    @Override
+    public int getPrevOrbitingBody() {
+        return this.sourceDimId;
+    }
 }

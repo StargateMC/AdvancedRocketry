@@ -222,9 +222,12 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 				if(world.isRemote) {
 					modules.add(new ModuleScaledImage(baseX,baseY,sizeX,sizeY, zmaster587.libVulpes.inventory.TextureResources.starryBG));
 					modules.add(srcPlanetImg);
-
-					
-					ModuleText text = new ModuleText(baseX + 4, baseY + 4, "Orbiting:", 0xFFFFFF);
+                                        ModuleText text = null;           
+					if (station.getOrbitingPlanetId() == Constants.INVALID_PLANET) {
+                                            text = new ModuleText(baseX + 4, baseY + 4, "Departed:", 0xFFFFFF);
+                                        } else {
+                                            text = new ModuleText(baseX + 4, baseY + 4, "Orbiting:", 0xFFFFFF);
+                                        }
 					text.setAlwaysOnTop(true);
 					modules.add(text);
 					
@@ -348,7 +351,10 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		else {
 			location = DimensionManager.getInstance().getDimensionProperties(world.provider.getDimension());
 			planetName = DimensionManager.getInstance().getDimensionProperties(world.provider.getDimension()).getName();
-
+                        if (location == null || planetName.isEmpty()) {
+                            location = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody());
+                            planetName = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody()).getName();
+                        }
 			if(planetName.isEmpty())
 				planetName = "???";
 		}
