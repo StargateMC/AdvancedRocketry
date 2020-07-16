@@ -172,7 +172,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
         }
         
         public double getPosZ() {
-            if (this.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID) {
+            if (this.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID || this.getOrbitingPlanetId() == Constants.INVALID_PLANET) {
                 DimensionProperties props1 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getPrevOrbitingBody());
                 DimensionProperties props2 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getDestOrbitingBody());
                 if (props1.getStar().equals(props2.getStar())) return props1.getStar().getPosZ();
@@ -193,7 +193,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
         }
         
         public double getPosX() {
-            if (this.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID) {
+            if (this.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID || this.getOrbitingPlanetId() == Constants.INVALID_PLANET) {
                 DimensionProperties props1 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getPrevOrbitingBody());
                 DimensionProperties props2 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getDestOrbitingBody());
                 if (props1.getStar().equals(props2.getStar())) return props1.getStar().getPosX();
