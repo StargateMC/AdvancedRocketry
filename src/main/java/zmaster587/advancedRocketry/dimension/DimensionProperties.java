@@ -610,7 +610,7 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 
 
                 if (isStar())
-                    return TextureResources.locationSunNew;
+                    return PlanetIcons.LAVA.resourceLEO;
 		if(isGasGiant())
 			return PlanetIcons.GASGIANTBLUE.resourceLEO;
 
