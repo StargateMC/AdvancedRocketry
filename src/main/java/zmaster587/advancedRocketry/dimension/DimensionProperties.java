@@ -552,6 +552,9 @@ public class DimensionProperties implements Cloneable, IDimensionProperties {
 		AtmosphereTypes atmType = AtmosphereTypes.getAtmosphereTypeFromValue(atmosphereDensity);
 		Temps tempType = Temps.getTempFromValue(getAverageTemp());
 
+                if (isStar() && !getStarData().isBlackHole())
+                        return TextureResources.locationSunNew;
+                
 		if(isStar() && getStarData().isBlackHole())
 			return TextureResources.locationBlackHole_icon;
 		

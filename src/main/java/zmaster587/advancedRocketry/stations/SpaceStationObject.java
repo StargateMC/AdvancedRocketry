@@ -183,7 +183,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
                 long fin = this.getTransitionTime(); // Finish time
                 long totalDuration = fin - start; // Total Duration
                 long currentTime = System.currentTimeMillis(); // Current time
-                double zPerMs = totalDuration / distZ; // Distance per millisecond (speed)
+                double zPerMs = distZ / totalDuration;
                 long currentDuration = currentTime - start; // Current time elapsed
                 return sourceZ + (zPerMs * currentDuration); // Source plus delta Z coordinate change based on speed and duration elapsed
             } else {
@@ -204,7 +204,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
                 long fin = this.getTransitionTime(); // Finish time
                 long totalDuration = fin - start; // Total Duration
                 long currentTime = System.currentTimeMillis(); // Current time
-                double xPerMs = totalDuration / distX; // Distance per millisecond (speed)
+                double xPerMs = distX / totalDuration;
                 long currentDuration = currentTime - start; // Current time elapsed
                 return sourceX + (xPerMs * currentDuration); // Source plus delta X coordinate change based on speed and duration elapsed
             } else {
