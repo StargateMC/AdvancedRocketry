@@ -49,6 +49,7 @@ import java.io.*;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.zip.GZIPOutputStream;
+import zmaster587.advancedRocketry.tile.station.TileWarpShipMonitor;
 
 
 public class DimensionManager implements IGalaxy {
@@ -284,6 +285,19 @@ public class DimensionManager implements IGalaxy {
 		}
 	}
 
+        public StellarBody getNearestStar(double x, double z) {
+            StellarBody star = null;
+            double distance = -1;
+            for (StellarBody body : this.starList.values()) {
+                double dist = TileWarpShipMonitor.distanceBetweenStarAndPosition(body,x,z);
+                if (distance == -1 || distance > dist) {
+                    star = body;
+                    distance = dist;
+                }
+            }
+            return star;
+        }
+        
 	public void tickDimensionsClient() {
 		//Tick satellites
 		for(int i : DimensionManager.getInstance().getLoadedDimensions()) {

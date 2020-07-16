@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import micdoodle8.mods.galacticraft.api.world.SpaceStationType;
+import zmaster587.advancedRocketry.tile.station.TileWarpShipMonitor;
 
 public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 	private int launchPosX, launchPosZ, posX, posZ;
@@ -50,6 +51,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 	private Set<Integer> knownPlanetList;
 	private HashMap<HashedBlockPosition, String> dockingPoints;
 	private long transitionEta;
+        private long transitionStart;
 	private EnumFacing direction;
 	private double rotation[];
 	private double angularVelocity[];
@@ -64,6 +66,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 		warpCoreLocation = new LinkedList<HashedBlockPosition>(); 
 		dockingPoints = new HashMap<HashedBlockPosition, String>();
 		transitionEta = -1;
+		transitionStart = -1;
 		destinationDimId = 0;
 		created = false;
 		knownPlanetList = new HashSet<Integer>();
@@ -76,13 +79,17 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 	}
 
 	public void beginTransition(long time) {
-		if(time > 0)
+		if(time > 0) {
 			transitionEta = time;
-		
+                        transitionStart = System.currentTimeMillis();
+                }
 		//Hack because somehow created ends up being false
 		created = true;
 	}
 
+        public long getTransitionStart() {
+            return this.transitionStart;
+        }
 	public long getTransitionTime() {
 		return transitionEta;
 	}
@@ -120,7 +127,92 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 	public int getOrbitingPlanetId() {
 		return created ? properties.getParentPlanet() : Constants.INVALID_PLANET;
 	}
-	
+        
+        public StellarBody getNearestStar() {
+            if (this.isInFTL() && !this.getSourcePlanet().getStar().equals(this.getDestPlanet().getStar())) {
+                return zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getNearestStar(this.getPosX(), this.getPosZ());
+            } else {
+                return this.getSourcePlanet().getStar();
+            }
+        }
+        
+        public boolean isTravellingInterSystem() {
+            return (this.isInFTL() && !this.getSourcePlanet().getStar().equals(this.getDestPlanet().getStar()));
+        }
+        
+        public boolean isTravellingInterGalactic() {
+            return (this.isInFTL() && !this.getSourcePlanet().getStar().getName().substring(7,9).equals(this.getDestPlanet().getStar().getName().substring(7,9)));
+        }
+        
+        
+        public DimensionProperties getSourcePlanet() {
+            DimensionProperties props1 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getPrevOrbitingBody());
+            return props1;
+        }
+        
+        public DimensionProperties getDestPlanet() {
+            DimensionProperties props1 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getDestOrbitingBody());
+            return props1;
+        }
+        
+        public boolean isInFTL() {
+            return this.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID || this.getOrbitingPlanetId() == Constants.INVALID_PLANET;
+        }
+        
+        public DimensionProperties getOutermostPlanet() {
+            IDimensionProperties planet = null;
+            double distance = -1;
+            for (IDimensionProperties body : this.getNearestStar().getPlanets()) {
+                if (distance == -1 || distance < body.getOrbitalDist()) {
+                    planet = body;
+                    distance = body.getOrbitalDist();
+                }
+            }
+            return zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(planet.getId());
+        }
+        
+        public double getPosZ() {
+            if (this.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID) {
+                DimensionProperties props1 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getPrevOrbitingBody());
+                DimensionProperties props2 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getDestOrbitingBody());
+                if (props1.getStar().equals(props2.getStar())) return props1.getStar().getPosZ();
+                int sourceZ = props1.getStar().getPosZ(); // Starting Z point
+                int destZ = props2.getStar().getPosZ(); // Destination Z point
+                int distZ = destZ - sourceZ; // total distance over Z
+                long start = this.getTransitionStart(); // Start time
+                long fin = this.getTransitionTime(); // Finish time
+                long totalDuration = fin - start; // Total Duration
+                long currentTime = System.currentTimeMillis(); // Current time
+                double zPerMs = totalDuration / distZ; // Distance per millisecond (speed)
+                long currentDuration = currentTime - start; // Current time elapsed
+                return sourceZ + (zPerMs * currentDuration); // Source plus delta Z coordinate change based on speed and duration elapsed
+            } else {
+                DimensionProperties props = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getOrbitingPlanetId());
+                return props.getStar().getPosZ();
+            }
+        }
+        
+        public double getPosX() {
+            if (this.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID) {
+                DimensionProperties props1 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getPrevOrbitingBody());
+                DimensionProperties props2 = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getDestOrbitingBody());
+                if (props1.getStar().equals(props2.getStar())) return props1.getStar().getPosX();
+                int sourceX = props1.getStar().getPosX(); // Starting X point
+                int destX = props2.getStar().getPosX(); // Destination X point
+                int distX = destX - sourceX; // total distance over X
+                long start = this.getTransitionStart(); // Start time
+                long fin = this.getTransitionTime(); // Finish time
+                long totalDuration = fin - start; // Total Duration
+                long currentTime = System.currentTimeMillis(); // Current time
+                double xPerMs = totalDuration / distX; // Distance per millisecond (speed)
+                long currentDuration = currentTime - start; // Current time elapsed
+                return sourceX + (xPerMs * currentDuration); // Source plus delta X coordinate change based on speed and duration elapsed
+            } else {
+                DimensionProperties props = zmaster587.advancedRocketry.dimension.DimensionManager.getInstance().getDimensionProperties(this.getOrbitingPlanetId());
+                return props.getStar().getPosX();
+            }
+        }
+        
 	public DimensionProperties getOrbitingPlanet()
 	{
 		int planetId = getOrbitingPlanetId();
@@ -629,6 +721,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 		nbt.setInteger("spawnY", spawnLocation.y);
 		nbt.setInteger("spawnZ", spawnLocation.z);
 		nbt.setInteger("destinationDimId", destinationDimId);
+		nbt.setInteger("sourceDimId", sourceDimId);
 		nbt.setInteger("fuel", fuelAmount);
 		nbt.setDouble("rotationX", rotation[0]);
 		nbt.setDouble("rotationY", rotation[1]);
@@ -651,6 +744,9 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 		if(transitionEta > -1)
 			nbt.setLong("transitionEta", transitionEta);
 
+		if(transitionStart > -1)
+			nbt.setLong("transitionStart", transitionStart);
+                
 		NBTTagList list = new NBTTagList();
 		for(StationLandingLocation pos : this.spawnLocations) {
 			NBTTagCompound tag = new NBTTagCompound();
@@ -691,6 +787,7 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 			orbitalDistance = properties.getParentOrbitalDistance();
 
 		destinationDimId = nbt.getInteger("destinationDimId");
+		this.sourceDimId = nbt.getInteger("sourceDimId");
 		launchPosX = nbt.getInteger("launchposX");
 		launchPosZ = nbt.getInteger("launchposY");
 		posX = nbt.getInteger("posX");
@@ -719,6 +816,9 @@ public class SpaceStationObject implements ISpaceObject, IPlanetDefiner {
 
 		if(nbt.hasKey("transitionEta"))
 			transitionEta = nbt.getLong("transitionEta");
+                
+		if(nbt.hasKey("transitionStart"))
+			transitionStart = nbt.getLong("transitionStart");
 
 		NBTTagList list = nbt.getTagList("spawnPositions", NBT.TAG_COMPOUND);
 		spawnLocations.clear();
