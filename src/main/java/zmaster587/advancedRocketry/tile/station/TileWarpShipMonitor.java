@@ -137,7 +137,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 
 			DimensionProperties destProperties = DimensionManager.getInstance().getDimensionProperties(getSpaceObject().getDestOrbitingBody());
                         System.out.println("Returning distance as fuel cost: " + (int)TileWarpShipMonitor.distanceBetweenDimensions(properties.getId(), destProperties.getId()));
-                        return (int)TileWarpShipMonitor.distanceBetweenDimensions(properties.getId(), destProperties.getId());
+                        return (int)Math.max(TileWarpShipMonitor.distanceBetweenDimensions(properties.getId(), destProperties.getId()),1);
 		}
 		return Integer.MAX_VALUE;
 	}
@@ -223,7 +223,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 					modules.add(new ModuleScaledImage(baseX,baseY,sizeX,sizeY, zmaster587.libVulpes.inventory.TextureResources.starryBG));
 					modules.add(srcPlanetImg);
                                         ModuleText text = null;           
-					if (station.getOrbitingPlanetId() == Constants.INVALID_PLANET) {
+					if (station.getDestOrbitingBody() == Constants.INVALID_PLANET) {
                                             text = new ModuleText(baseX + 4, baseY + 4, "Departed:", 0xFFFFFF);
                                         } else {
                                             text = new ModuleText(baseX + 4, baseY + 4, "Orbiting:", 0xFFFFFF);
@@ -344,14 +344,20 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		String planetName = null;
 
 		if(isOnStation) {
-			DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(station.getOrbitingPlanetId());
-			location = properties;
-			planetName = properties.getName();
+                        if (station.getDestOrbitingBody() == Constants.INVALID_PLANET) {
+                            DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody());
+                            location = properties;
+                            planetName = properties.getName();
+                        } else {
+                            DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(station.getOrbitingPlanetId());
+                            location = properties;
+                            planetName = properties.getName();
+                        }
 		}
 		else {
                         if (location == null || planetName == null) {
-                            location = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody());
-                            planetName = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody()).getName();
+                            location = DimensionManager.getInstance().getDimensionProperties(world.provider.getDimension());
+                            planetName = DimensionManager.getInstance().getDimensionProperties(world.provider.getDimension()).getName();
                         }
 			if(planetName == null)
 				planetName = "???";
