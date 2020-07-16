@@ -125,8 +125,8 @@ public class ModulePlanetSelector extends ModuleContainerPan implements IButtonI
 	@Override
 	public void onScroll(int dwheel) {
 		//TODO
-		//zoom = Math.min(Math.max(zoom + dwheel/1000.0, 0.36), 2.0);
-		//redrawSystem();
+		zoom = Math.min(Math.max(zoom + dwheel/1000.0, 0.36), 2.0);
+		redrawSystem();
 		
 		if(clickablePlanetList != null)
 			clickablePlanetList.onScroll(dwheel);

@@ -223,7 +223,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 					modules.add(new ModuleScaledImage(baseX,baseY,sizeX,sizeY, zmaster587.libVulpes.inventory.TextureResources.starryBG));
 					modules.add(srcPlanetImg);
                                         ModuleText text = null;           
-					if (station.getDestOrbitingBody() == Constants.INVALID_PLANET) {
+					if (station.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID) {
                                             text = new ModuleText(baseX + 4, baseY + 4, "Departed:", 0xFFFFFF);
                                         } else {
                                             text = new ModuleText(baseX + 4, baseY + 4, "Orbiting:", 0xFFFFFF);
@@ -344,7 +344,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 		String planetName = null;
 
 		if(isOnStation) {
-                        if (station.getDestOrbitingBody() == Constants.INVALID_PLANET) {
+                        if (station.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID) {
                             DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(station.getPrevOrbitingBody());
                             location = properties;
                             planetName = properties.getName();
