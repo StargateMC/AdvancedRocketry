@@ -420,7 +420,7 @@ public class TileWarpShipMonitor extends TileEntity implements ITickable, IModul
 			DimensionProperties dstProps = null;
 			if(isOnStation) {
 				//dstProps = DimensionManager.getInstance().getDimensionProperties(dstPlanet);
-                            if (station.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID) {
+                            if (station.getOrbitingPlanetId() == SpaceObjectManager.WARPDIMID || station.getOrbitingPlanetId() == Constants.INVALID_PLANET) {
                                 DimensionProperties properties = DimensionManager.getInstance().getDimensionProperties(station.getDestOrbitingBody());
                                 location = properties;
                                 planetName = properties.getName();
