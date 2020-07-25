@@ -71,10 +71,7 @@ public class TileWarpCore extends TileMultiBlock {
 				int amt = 0;
 				if(stack != null && OreDictionary.itemMatches(MaterialRegistry.getItemStackFromMaterialAndType("Dilithium", AllowedProducts.getProductByName("GEM")), stack, false)) {
 					int stackSize = stack.getCount();
-					if(!world.isRemote)
 						amt = getSpaceObject().addFuel(ARConfiguration.getCurrentConfig().fuelPointsPerDilithium*stack.getCount());
-					else
-						amt = Math.min(getSpaceObject().getFuelAmount() + 10*stack.getCount(), getSpaceObject().getMaxFuelAmount()) - getSpaceObject().getFuelAmount();//
 					inv.decrStackSize(i, amt/10);
 					inv.markDirty();
 					
