@@ -30,6 +30,8 @@ import zmaster587.libVulpes.network.PacketItemModifcation;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.stargatemc.data.PerWorldData;
+
 public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements IModularInventory, IButtonInventory, INetworkItem {
 
 	@Override
@@ -79,6 +81,12 @@ public class ItemBiomeChanger extends ItemSatelliteIdentificationChip implements
 			list.add(LibVulpes.proxy.getLocalizedString("msg.connected"));
 			list.add(LibVulpes.proxy.getLocalizedString("msg.biomechanger.selBiome") + Biome.getBiome(mapping.getBiome()).getBiomeName());
 			list.add(LibVulpes.proxy.getLocalizedString("msg.biomechanger.numBiome") + mapping.discoveredBiomes().size());
+			if (!player.isRemote && PerWorldData.isProtected(player)) {
+				list.add("Terraforming is disabled on a protected world");
+			}
+			if (!player.isRemote && !PerWorldData.isUninhabited(player)) {
+				list.add("Terraforming is disabled on an npc-inhabited world");
+			}
 		}
 		else
 			list.add(LibVulpes.proxy.getLocalizedString("msg.notconnected"));
