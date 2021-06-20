@@ -93,10 +93,12 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 
 			for(int i = 0; i < 10; i++) {
 				if(world.getTotalWorldTime() % 1 == 0 && !toChangeList.isEmpty()) {
+					if (!world.isRemote) {
+						if (PerWorldData.isProtected(world) || !PerWorldData.isUninhabited(world)) break;
+					}
 					if(extractEnergy(10, true) ==10 ) {
 						extractEnergy(10, false);
 						HashedBlockPosition pos = toChangeList.remove(world.rand.nextInt(toChangeList.size()));
-
 						BiomeHandler.changeBiome(world, biomeId, pos.getBlockPos());
 
 					}
