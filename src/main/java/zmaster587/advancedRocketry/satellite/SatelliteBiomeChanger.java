@@ -17,6 +17,8 @@ import zmaster587.libVulpes.util.HashedBlockPosition;
 
 import java.util.*;
 
+import com.stargatemc.data.PerWorldData;
+
 public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversalEnergy {
 
 	private int biomeId;
@@ -117,6 +119,7 @@ public class SatelliteBiomeChanger extends SatelliteEnergy implements IUniversal
 		Set<Chunk> set = new HashSet<Chunk>();
 		radius = 16;
 		MAX_SIZE = 1024;
+		if (PerWorldData.isProtected(world) || !PerWorldData.isUninhabited(world)) return false;
 		for(int xx = -radius + pos.getX(); xx < radius + pos.getX(); xx++) {
 			for(int zz = -radius + pos.getZ(); zz < radius + pos.getZ(); zz++) {
 
