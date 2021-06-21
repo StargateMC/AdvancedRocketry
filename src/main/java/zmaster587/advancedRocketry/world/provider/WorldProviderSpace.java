@@ -35,18 +35,27 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	public boolean isPlanet() {
 		return false;
 	}
-	
 	@Override
-	public String getSaveFolder() {
-			System.out.println("Getting Save folder for : " + this.getDimension() + ", which is " + DimensionManager.getInstance().getDimensionProperties(this.getDimension()).getName());
-			
+	public String getSaveFolder() {		
 			switch (this.getDimension()) {
 				case -2:
 					return "Space";
 				case -9000:
-					return "X3AMD30XL";
+					return "RP_Midway";
 				case -9001:
-					return "D9JSXVP1D";
+					return "RP_Destiny";
+				case -9002:
+					return "RP_Beliskner";
+				case -9003:
+					return "RP_OriMotherShip";
+				case -9004:
+					return "RP_Aurora";
+				case -9005:
+					return "RP_ReplicatorShip";
+				case -9006:
+					return "RP_Daedalus";
+				case -9007:
+					return "RP_Hatak";
 				default:
 					return "ERROR";
 							

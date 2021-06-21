@@ -1111,8 +1111,14 @@ public class AdvancedRocketry {
 
 		//Register space dimension
 		net.minecraftforge.common.DimensionManager.registerDimension(zmaster587.advancedRocketry.api.ARConfiguration.getCurrentConfig().spaceDimId, DimensionManager.spaceDimensionType);
-		net.minecraftforge.common.DimensionManager.registerDimension(-9000, DimensionManager.spaceDimensionType);
-		net.minecraftforge.common.DimensionManager.registerDimension(-9001, DimensionManager.spaceDimensionType);
+		net.minecraftforge.common.DimensionManager.registerDimension(-9000, DimensionManager.spaceDimensionType); // Midway (Void)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9001, DimensionManager.spaceDimensionType); // Destiny (Seed ship)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9002, DimensionManager.spaceDimensionType); // Beliskner (General)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9003, DimensionManager.spaceDimensionType); // Ori Mothership (General)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9004, DimensionManager.spaceDimensionType); // Aurora (General)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9005, DimensionManager.spaceDimensionType); // ReplicatorShip (General)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9006, DimensionManager.spaceDimensionType); // Daedalus (General)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9007, DimensionManager.spaceDimensionType); // Hatak (General)
 		ARConfiguration.loadPostInit();
 		//TODO recipes?
 		machineRecipes.registerXMLRecipes();
