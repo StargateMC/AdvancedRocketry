@@ -36,6 +36,14 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 		return false;
 	}
 	
+	@Override
+	public String getSaveFolder() {
+			if (this.getDimension() == -2) {
+				return "Space";
+			} else {
+				return DimensionManager.getInstance().getDimensionProperties(this.getDimension()).getName();
+			}
+	}
 	
 	public int getAverageGroundLevel() {
 		return 0;
