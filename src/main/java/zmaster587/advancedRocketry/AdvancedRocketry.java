@@ -1113,7 +1113,6 @@ public class AdvancedRocketry {
 		net.minecraftforge.common.DimensionManager.registerDimension(zmaster587.advancedRocketry.api.ARConfiguration.getCurrentConfig().spaceDimId, DimensionManager.spaceDimensionType);
 		net.minecraftforge.common.DimensionManager.registerDimension(-9000, DimensionManager.spaceDimensionType);
 		net.minecraftforge.common.DimensionManager.registerDimension(-9001, DimensionManager.spaceDimensionType);
-		net.minecraftforge.common.DimensionManager.registerDimension(-9002, DimensionManager.spaceDimensionType);
 		ARConfiguration.loadPostInit();
 		//TODO recipes?
 		machineRecipes.registerXMLRecipes();

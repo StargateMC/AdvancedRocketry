@@ -38,10 +38,18 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 	
 	@Override
 	public String getSaveFolder() {
-			if (this.getDimension() == -2) {
-				return "Space";
-			} else {
-				return DimensionManager.getInstance().getDimensionProperties(this.getDimension()).getName();
+			System.out.println("Getting Save folder for : " + this.getDimension() + ", which is " + DimensionManager.getInstance().getDimensionProperties(this.getDimension()).getName());
+			
+			switch (this.getDimension()) {
+				case -2:
+					return "Space";
+				case -9000:
+					return "X3AMD30XL";
+				case -9001:
+					return "D9JSXVP1D";
+				default:
+					return "ERROR";
+							
 			}
 	}
 	
