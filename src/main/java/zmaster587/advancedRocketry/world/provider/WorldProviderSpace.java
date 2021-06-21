@@ -57,7 +57,7 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 				case -9007:
 					return "RP_Hatak";
 				case -9008:
-					return "RP_Hatak";
+					return "RP_Hive";
 				default:
 					return "ERROR";
 							
