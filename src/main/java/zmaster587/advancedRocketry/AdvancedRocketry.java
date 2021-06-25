@@ -1120,6 +1120,7 @@ public class AdvancedRocketry {
 		net.minecraftforge.common.DimensionManager.registerDimension(-9006, DimensionManager.spaceDimensionType); // Daedalus (General)
 		net.minecraftforge.common.DimensionManager.registerDimension(-9007, DimensionManager.spaceDimensionType); // Hatak (General)
 		net.minecraftforge.common.DimensionManager.registerDimension(-9008, DimensionManager.spaceDimensionType); // Hive (General)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9009, DimensionManager.spaceDimensionType); // General Space Dim for Spawn
 		ARConfiguration.loadPostInit();
 		//TODO recipes?
 		machineRecipes.registerXMLRecipes();

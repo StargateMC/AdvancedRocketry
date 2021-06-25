@@ -58,6 +58,8 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 					return "RP_Hatak";
 				case -9008:
 					return "RP_Hive";
+				case -9009:
+					return "RP_HubSpawn";
 				default:
 					return "ERROR";
 							
