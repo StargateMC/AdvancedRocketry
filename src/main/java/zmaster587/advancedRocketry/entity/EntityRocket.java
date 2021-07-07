@@ -124,6 +124,15 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, IM
 	//Used to most of the logic, determining if in RCS mode or not
 	private boolean rcs_mode = false;
 
+	
+	public int getDestinationDimension() {
+		return this.destinationDimId;
+	}
+	
+	public int getFromDestination() {
+		return this.lastDimensionFrom;
+	}
+	
 	public static enum PacketType {
 		RECIEVENBT,
 		SENDINTERACT,
@@ -1501,7 +1510,7 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, IM
 			setInFlight(true);
 			return;
 		}
-
+		this.lastDimensionFrom = this.provider.getDimension();
 		RocketPreLaunchEvent event = new RocketEvent.RocketPreLaunchEvent(this);
 		MinecraftForge.EVENT_BUS.post(event);
 
