@@ -1510,7 +1510,6 @@ public class EntityRocket extends EntityRocketBase implements INetworkEntity, IM
 			setInFlight(true);
 			return;
 		}
-		this.lastDimensionFrom = this.provider.getDimension();
 		RocketPreLaunchEvent event = new RocketEvent.RocketPreLaunchEvent(this);
 		MinecraftForge.EVENT_BUS.post(event);
 
