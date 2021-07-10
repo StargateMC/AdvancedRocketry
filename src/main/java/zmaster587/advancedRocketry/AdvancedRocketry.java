@@ -1118,12 +1118,19 @@ public class AdvancedRocketry {
 		net.minecraftforge.common.DimensionManager.registerDimension(-9004, DimensionManager.spaceDimensionType); // Aurora (General)
 		net.minecraftforge.common.DimensionManager.registerDimension(-9005, DimensionManager.spaceDimensionType); // ReplicatorShip (General)
 		net.minecraftforge.common.DimensionManager.registerDimension(-9006, DimensionManager.spaceDimensionType); // Daedalus (General)
-		net.minecraftforge.common.DimensionManager.registerDimension(-9007, DimensionManager.spaceDimensionType); // Hatak (General)
+		net.minecraftforge.common.DimensionManager.registerDimension(-9007, DimensionManager.spaceDimensionType); // Lucian Alliance
 		net.minecraftforge.common.DimensionManager.registerDimension(-9008, DimensionManager.spaceDimensionType); // Hive (General)
 		net.minecraftforge.common.DimensionManager.registerDimension(-9009, DimensionManager.spaceDimensionType); // General Space Dim for Spawn
 		net.minecraftforge.common.DimensionManager.registerDimension(-9010, DimensionManager.spaceDimensionType); // Apollo
 		net.minecraftforge.common.DimensionManager.registerDimension(-9011, DimensionManager.spaceDimensionType); // Odyssey
 		net.minecraftforge.common.DimensionManager.registerDimension(-9012, DimensionManager.spaceDimensionType); // Tria
+		net.minecraftforge.common.DimensionManager.registerDimension(-9013, DimensionManager.spaceDimensionType); // Tokra
+		net.minecraftforge.common.DimensionManager.registerDimension(-9014, DimensionManager.spaceDimensionType); // Free Jaffa
+		net.minecraftforge.common.DimensionManager.registerDimension(-9015, DimensionManager.spaceDimensionType); // Apophis
+		net.minecraftforge.common.DimensionManager.registerDimension(-9016, DimensionManager.spaceDimensionType); // Cronus
+		net.minecraftforge.common.DimensionManager.registerDimension(-9017, DimensionManager.spaceDimensionType); // Baal
+		net.minecraftforge.common.DimensionManager.registerDimension(-9018, DimensionManager.spaceDimensionType); // Anubis
+		net.minecraftforge.common.DimensionManager.registerDimension(-9019, DimensionManager.spaceDimensionType); // Lord Yu
 		ARConfiguration.loadPostInit();
 		//TODO recipes?
 		machineRecipes.registerXMLRecipes();

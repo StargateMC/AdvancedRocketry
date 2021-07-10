@@ -55,7 +55,7 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 				case -9006:
 					return "RP_Daedalus";
 				case -9007:
-					return "RP_Hatak";
+					return "RP_Lucian_Alliance_Hatak";
 				case -9008:
 					return "RP_Hive";
 				case -9009:
@@ -66,6 +66,20 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 					return "RP_Odyssey";
 				case -9012:
 					return "RP_Tria";
+				case -9013:
+					return "RP_Tokra_Hatak";
+				case -9014:
+					return "RP_Free_Jaffa_Hatak";
+				case -9015:
+					return "RP_Apophis_Hatak";
+				case -9016:
+					return "RP_Cronus_Hatak";
+				case -9017:
+					return "RP_Baal_Hatak";
+				case -9018:
+					return "RP_Anubis_Hatak";
+				case -9019:
+					return "RP_Lord_Yu_Hatak";
 				default:
 					return "ERROR";
 							
