@@ -60,6 +60,12 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 					return "RP_Hive";
 				case -9009:
 					return "RP_HubSpawn";
+				case -9010:
+					return "RP_Apollo";
+				case -9011:
+					return "RP_Odyssey";
+				case -9012:
+					return "RP_Tria";
 				default:
 					return "ERROR";
 							
