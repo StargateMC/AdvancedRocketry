@@ -80,6 +80,8 @@ public class WorldProviderSpace extends WorldProviderPlanet {
 					return "RP_Anubis_Hatak";
 				case -9019:
 					return "RP_Lord_Yu_Hatak";
+				case -9020:
+					return "RP_NakaiShip";
 				default:
 					return "ERROR";
 							
