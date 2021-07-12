@@ -76,6 +76,7 @@ public class DimensionManager implements IGalaxy {
 	public static Class<? extends WorldProvider> planetWorldProvider;
 	private HashMap<Integer,DimensionProperties> dimensionList;
 	private HashMap<String,DimensionProperties> dimensionListByName = new HashMap<String,DimensionProperties>();
+	private HashMap<String,ArrayList<Integer>> dimensionidsByGalaxy = new HashMap<String,ArrayList<Integer>>();
 	private HashMap<String,ArrayList<DimensionProperties>> dimensionListByGalaxy = new HashMap<String,ArrayList<DimensionProperties>>();
 	private HashMap<String,ArrayList<DimensionProperties>> dimensionListBySystem = new HashMap<String,ArrayList<DimensionProperties>>();
         
@@ -101,7 +102,9 @@ public class DimensionManager implements IGalaxy {
         public ArrayList<DimensionProperties> getDimensionsForSystem(String system, String galaxy) {
             return dimensionListBySystem.get(system+galaxy);
         }
-        
+        public ArrayList<Integer> getDimensionsIdsForGalaxy(String galaxy) {
+            return dimensionidsByGalaxy.get(galaxy);
+        }
         public ArrayList<DimensionProperties> getDimensionsForGalaxy(String galaxy) {
             return dimensionListByGalaxy.get(galaxy);
         }
@@ -317,17 +320,30 @@ public class DimensionManager implements IGalaxy {
 		dimensionList.put(new Integer(dimId),properties);
                 dimensionListByName.put(properties.getName(), properties);
                 ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
+                ArrayList<Integer> ids = new ArrayList<Integer>();
                 boolean existed = false;
+                boolean existedId = false;
                 if (dimensionListByGalaxy.containsKey(properties.getName().substring(7,9))) {
                     props = dimensionListByGalaxy.get(properties.getName().substring(7,9));
                     existed = true;
                 }
+
+                if (dimensionidsByGalaxy.containsKey(properties.getName().substring(7,9))) {
+                    ids = dimensionidsByGalaxy.get(properties.getName().substring(7,9));
+                    existedId = true;
+                }
                 if (!props.contains(properties)) props.add(properties);
+                if (!ids.contains(properties.getId())) ids.add(properties.getId());
                 System.out.println("Adding: " + properties.getName() + " to galaxy: " + properties.getName().substring(7,9));
                 if (existed) {
                     dimensionListByGalaxy.replace(properties.getName().substring(7,9), props);
                 } else {
                     dimensionListByGalaxy.put(properties.getName().substring(7,9), props);
+                }
+                if (existedId) {
+                	dimensionidsByGalaxy.replace(properties.getName().substring(7,9), ids);
+                } else {
+                	dimensionidsByGalaxy.put(properties.getName().substring(7,9), ids);
                 }
                 props = new ArrayList<DimensionProperties>();
                 existed = false;
