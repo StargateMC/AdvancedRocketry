@@ -616,14 +616,15 @@ public class DimensionManager implements IGalaxy {
 		// Avoid registering gas giants as dimensions
 		if (registerWithForge && properties.hasSurface()
 				&& !net.minecraftforge.common.DimensionManager.isDimensionRegistered(dim)) {
-
 			if (properties.isAsteroid())
 				net.minecraftforge.common.DimensionManager.registerDimension(dimId, AsteroidDimensionType);
 			else
 				net.minecraftforge.common.DimensionManager.registerDimension(dimId, PlanetDimensionType);
 		}
+		
 		dimensionList.put(dimId, properties);
 		dimensionListByName.put(properties.getName(), properties);
+		if (properties.getName().length() < 9) return true;
 		ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		boolean existed = false;
