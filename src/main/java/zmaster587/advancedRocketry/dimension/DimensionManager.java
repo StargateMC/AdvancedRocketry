@@ -109,7 +109,11 @@ public class DimensionManager implements IGalaxy {
 	public ArrayList<DimensionProperties> getDimensionsForSystem(String system, String galaxy) {
 		return dimensionListBySystem.get(system + galaxy);
 	}
-
+	public ArrayList<Integer> getUninhabitableDimensionIdsForGalaxy(String galaxy) {
+		ArrayList<Integer> all = getDimensionsIdsForGalaxy(galaxy);
+		all.removeAll(getHabitableDimensionIdsForGalaxy(galaxy));
+		return all;
+	}
 	public ArrayList<Integer> getHabitableDimensionIdsForGalaxy(String galaxy) {
 		return HabitabledimensionidsByGalaxy.get(galaxy);
 	}
