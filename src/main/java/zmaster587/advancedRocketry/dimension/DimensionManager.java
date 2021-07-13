@@ -80,6 +80,7 @@ public class DimensionManager implements IGalaxy {
 	private HashMap<Integer, DimensionProperties> dimensionList;
 	private HashMap<String, DimensionProperties> dimensionListByName = new HashMap<String, DimensionProperties>();
 	private HashMap<String, ArrayList<Integer>> dimensionidsByGalaxy = new HashMap<String, ArrayList<Integer>>();
+	private HashMap<String, ArrayList<Integer>> HabitabledimensionidsByGalaxy = new HashMap<String, ArrayList<Integer>>();
 	private HashMap<String, ArrayList<DimensionProperties>> dimensionListByGalaxy = new HashMap<String, ArrayList<DimensionProperties>>();
 	private HashMap<String, ArrayList<DimensionProperties>> dimensionListBySystem = new HashMap<String, ArrayList<DimensionProperties>>();
 
@@ -107,6 +108,10 @@ public class DimensionManager implements IGalaxy {
 
 	public ArrayList<DimensionProperties> getDimensionsForSystem(String system, String galaxy) {
 		return dimensionListBySystem.get(system + galaxy);
+	}
+
+	public ArrayList<Integer> getHabitableDimensionIdsForGalaxy(String galaxy) {
+		return HabitabledimensionidsByGalaxy.get(galaxy);
 	}
 
 	public ArrayList<Integer> getDimensionsIdsForGalaxy(String galaxy) {
@@ -340,11 +345,16 @@ public class DimensionManager implements IGalaxy {
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		boolean existed = false;
 		boolean existedId = false;
+		boolean existedHabitableId = false;
 		if (dimensionListByGalaxy.containsKey(properties.getName().substring(7, 9))) {
 			props = dimensionListByGalaxy.get(properties.getName().substring(7, 9));
 			existed = true;
 		}
 
+		if (HabitabledimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
+			ids = HabitabledimensionidsByGalaxy.get(properties.getName().substring(7, 9));
+			existedHabitableId = true;
+		}
 		if (dimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
 			ids = dimensionidsByGalaxy.get(properties.getName().substring(7, 9));
 			existedId = true;
@@ -358,6 +368,13 @@ public class DimensionManager implements IGalaxy {
 			dimensionListByGalaxy.replace(properties.getName().substring(7, 9), props);
 		} else {
 			dimensionListByGalaxy.put(properties.getName().substring(7, 9), props);
+		}
+		if (properties.isHabitable()) {
+			if (existedHabitableId) {
+				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
+			} else {
+				HabitabledimensionidsByGalaxy.put(properties.getName().substring(7, 9), ids);
+			}
 		}
 		if (existedId) {
 			dimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
@@ -630,15 +647,21 @@ public class DimensionManager implements IGalaxy {
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		boolean existed = false;
 		boolean existedId = false;
+		boolean habitableId = false;
+
 		if (dimensionListByGalaxy.containsKey(properties.getName().substring(7, 9))) {
 			props = dimensionListByGalaxy.get(properties.getName().substring(7, 9));
 			existed = true;
 		}
-
+		if (HabitabledimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
+			ids = HabitabledimensionidsByGalaxy.get(properties.getName().substring(7, 9));
+			habitableId = true;
+		}
 		if (dimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
 			ids = dimensionidsByGalaxy.get(properties.getName().substring(7, 9));
 			existedId = true;
 		}
+
 		if (!props.contains(properties))
 			props.add(properties);
 		if (!ids.contains(properties.getId()))
@@ -648,6 +671,13 @@ public class DimensionManager implements IGalaxy {
 			dimensionListByGalaxy.replace(properties.getName().substring(7, 9), props);
 		} else {
 			dimensionListByGalaxy.put(properties.getName().substring(7, 9), props);
+		}
+		if (!properties.isStar() && !properties.isGasGiant() && properties.isHabitable()) {
+			if (habitableId) {
+				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
+			} else {
+				HabitabledimensionidsByGalaxy.put(properties.getName().substring(7, 9), ids);
+			}
 		}
 		if (!properties.isStar() && !properties.isGasGiant()) {
 			if (existedId) {
