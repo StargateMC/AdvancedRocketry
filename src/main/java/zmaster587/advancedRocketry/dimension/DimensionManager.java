@@ -621,10 +621,11 @@ public class DimensionManager implements IGalaxy {
 			else
 				net.minecraftforge.common.DimensionManager.registerDimension(dimId, PlanetDimensionType);
 		}
-		
+
 		dimensionList.put(dimId, properties);
 		dimensionListByName.put(properties.getName(), properties);
-		if (properties.getName().length() < 9) return true;
+		if (properties.getName().length() < 9)
+			return true;
 		ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		boolean existed = false;
@@ -648,10 +649,12 @@ public class DimensionManager implements IGalaxy {
 		} else {
 			dimensionListByGalaxy.put(properties.getName().substring(7, 9), props);
 		}
-		if (existedId) {
-			dimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
-		} else {
-			dimensionidsByGalaxy.put(properties.getName().substring(7, 9), ids);
+		if (!properties.isStar() && !properties.isGasGiant()) {
+			if (existedId) {
+				dimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
+			} else {
+				dimensionidsByGalaxy.put(properties.getName().substring(7, 9), ids);
+			}
 		}
 		props = new ArrayList<DimensionProperties>();
 		existed = false;
