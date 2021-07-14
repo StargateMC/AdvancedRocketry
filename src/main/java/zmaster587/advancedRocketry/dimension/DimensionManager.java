@@ -387,6 +387,7 @@ public class DimensionManager implements IGalaxy {
 				+ " and is breathable: " + properties.getAtmosphere().isBreathable() + " dimension!");
 
 		if (properties.isHabitable()) {
+			if (!habitableids.contains(properties.getId())) habitableids.add(properties.getId());
 			if (existedHabitableId) {
 				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), habitableids);
 			} else {
@@ -694,6 +695,9 @@ public class DimensionManager implements IGalaxy {
 		System.out.println("Adding2: " + properties.getName() + " with avTmp: " + properties.getAverageTemp()
 				+ " and is breathable: " + properties.getAtmosphere().isBreathable() + " dimension!");
 		if (!properties.isStar() && !properties.isGasGiant() && properties.isHabitable()) {
+
+			if (!habitableids.contains(properties.getId()))
+				habitableids.add(properties.getId());
 			System.out.println("Adding2: " + properties.getName() + " as a habitable dimension!");
 			if (habitableId) {
 				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), habitableids);
