@@ -109,20 +109,25 @@ public class DimensionManager implements IGalaxy {
 	public ArrayList<DimensionProperties> getDimensionsForSystem(String system, String galaxy) {
 		return dimensionListBySystem.get(system + galaxy);
 	}
+
 	public ArrayList<Integer> getUninhabitableDimensionIdsForGalaxy(String galaxy) {
 		ArrayList<Integer> all = getDimensionsIdsForGalaxy(galaxy);
 		all.removeAll(getHabitableDimensionIdsForGalaxy(galaxy));
-		System.out.println("Returning: " + all.size() + " for : getUninhabitableDimensionIdsForGalaxy : " + galaxy + "!");
+		System.out
+				.println("Returning: " + all.size() + " for : getUninhabitableDimensionIdsForGalaxy : " + galaxy + "!");
 		return all;
 	}
+
 	public ArrayList<Integer> getHabitableDimensionIdsForGalaxy(String galaxy) {
-		System.out.println("Returning: " + HabitabledimensionidsByGalaxy.get(galaxy).size() + " for : HabitabledimensionidsByGalaxy : " + galaxy + "!");
+		System.out.println("Returning: " + HabitabledimensionidsByGalaxy.get(galaxy).size()
+				+ " for : HabitabledimensionidsByGalaxy : " + galaxy + "!");
 		return new ArrayList<Integer>(HabitabledimensionidsByGalaxy.get(galaxy));
 
 	}
 
 	public ArrayList<Integer> getDimensionsIdsForGalaxy(String galaxy) {
-		System.out.println("Returning: " + dimensionidsByGalaxy.get(galaxy).size() + " for : getDimensionsIdsForGalaxy : " + galaxy + "!");
+		System.out.println("Returning: " + dimensionidsByGalaxy.get(galaxy).size()
+				+ " for : getDimensionsIdsForGalaxy : " + galaxy + "!");
 		return new ArrayList<Integer>(dimensionidsByGalaxy.get(galaxy));
 	}
 
@@ -378,8 +383,10 @@ public class DimensionManager implements IGalaxy {
 		} else {
 			dimensionListByGalaxy.put(properties.getName().substring(7, 9), props);
 		}
+		System.out.println("Adding1: " + properties.getName() + " with avTmp: " + properties.getAverageTemp()
+				+ " and is breathable: " + properties.getAtmosphere().isBreathable() + " dimension!");
+
 		if (properties.getAtmosphere().isBreathable()) {
-			System.out.println("Adding: " + properties.getName() + " as a habitable dimension!");
 			if (existedHabitableId) {
 				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), habitableids);
 			} else {
@@ -683,6 +690,9 @@ public class DimensionManager implements IGalaxy {
 		} else {
 			dimensionListByGalaxy.put(properties.getName().substring(7, 9), props);
 		}
+
+		System.out.println("Adding2: " + properties.getName() + " with avTmp: " + properties.getAverageTemp()
+				+ " and is breathable: " + properties.getAtmosphere().isBreathable() + " dimension!");
 		if (!properties.isStar() && !properties.isGasGiant() && properties.getAtmosphere().isBreathable()) {
 			System.out.println("Adding2: " + properties.getName() + " as a habitable dimension!");
 			if (habitableId) {
