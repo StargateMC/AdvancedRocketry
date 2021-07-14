@@ -117,12 +117,13 @@ public class DimensionManager implements IGalaxy {
 	}
 	public ArrayList<Integer> getHabitableDimensionIdsForGalaxy(String galaxy) {
 		System.out.println("Returning: " + HabitabledimensionidsByGalaxy.get(galaxy).size() + " for : HabitabledimensionidsByGalaxy : " + galaxy + "!");
-		return HabitabledimensionidsByGalaxy.get(galaxy);
+		return new ArrayList<Integer>(HabitabledimensionidsByGalaxy.get(galaxy));
+
 	}
 
 	public ArrayList<Integer> getDimensionsIdsForGalaxy(String galaxy) {
 		System.out.println("Returning: " + dimensionidsByGalaxy.get(galaxy).size() + " for : getDimensionsIdsForGalaxy : " + galaxy + "!");
-		return dimensionidsByGalaxy.get(galaxy);
+		return new ArrayList<Integer>(dimensionidsByGalaxy.get(galaxy));
 	}
 
 	public ArrayList<DimensionProperties> getDimensionsForGalaxy(String galaxy) {
