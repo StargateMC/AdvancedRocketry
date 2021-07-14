@@ -373,7 +373,7 @@ public class DimensionManager implements IGalaxy {
 		} else {
 			dimensionListByGalaxy.put(properties.getName().substring(7, 9), props);
 		}
-		if (properties.isHabitable()) {
+		if (properties.getAtmosphere().isBreathable()) {
 			if (existedHabitableId) {
 				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
 			} else {
@@ -676,7 +676,7 @@ public class DimensionManager implements IGalaxy {
 		} else {
 			dimensionListByGalaxy.put(properties.getName().substring(7, 9), props);
 		}
-		if (!properties.isStar() && !properties.isGasGiant() && properties.isHabitable()) {
+		if (!properties.isStar() && !properties.isGasGiant() && properties.getAtmosphere().isBreathable()) {
 			if (habitableId) {
 				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
 			} else {
