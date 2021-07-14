@@ -112,13 +112,16 @@ public class DimensionManager implements IGalaxy {
 	public ArrayList<Integer> getUninhabitableDimensionIdsForGalaxy(String galaxy) {
 		ArrayList<Integer> all = getDimensionsIdsForGalaxy(galaxy);
 		all.removeAll(getHabitableDimensionIdsForGalaxy(galaxy));
+		System.out.println("Returning: " + all.size() + " for : getUninhabitableDimensionIdsForGalaxy : " + galaxy + "!");
 		return all;
 	}
 	public ArrayList<Integer> getHabitableDimensionIdsForGalaxy(String galaxy) {
+		System.out.println("Returning: " + HabitabledimensionidsByGalaxy.get(galaxy).size() + " for : HabitabledimensionidsByGalaxy : " + galaxy + "!");
 		return HabitabledimensionidsByGalaxy.get(galaxy);
 	}
 
 	public ArrayList<Integer> getDimensionsIdsForGalaxy(String galaxy) {
+		System.out.println("Returning: " + dimensionidsByGalaxy.get(galaxy).size() + " for : getDimensionsIdsForGalaxy : " + galaxy + "!");
 		return dimensionidsByGalaxy.get(galaxy);
 	}
 
@@ -347,6 +350,7 @@ public class DimensionManager implements IGalaxy {
 		dimensionListByName.put(properties.getName(), properties);
 		ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
 		ArrayList<Integer> ids = new ArrayList<Integer>();
+		ArrayList<Integer> habitableids = new ArrayList<Integer>();
 		boolean existed = false;
 		boolean existedId = false;
 		boolean existedHabitableId = false;
@@ -356,7 +360,7 @@ public class DimensionManager implements IGalaxy {
 		}
 
 		if (HabitabledimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
-			ids = HabitabledimensionidsByGalaxy.get(properties.getName().substring(7, 9));
+			habitableids = HabitabledimensionidsByGalaxy.get(properties.getName().substring(7, 9));
 			existedHabitableId = true;
 		}
 		if (dimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
@@ -375,9 +379,9 @@ public class DimensionManager implements IGalaxy {
 		}
 		if (properties.getAtmosphere().isBreathable()) {
 			if (existedHabitableId) {
-				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
+				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), habitableids);
 			} else {
-				HabitabledimensionidsByGalaxy.put(properties.getName().substring(7, 9), ids);
+				HabitabledimensionidsByGalaxy.put(properties.getName().substring(7, 9), habitableids);
 			}
 		}
 		if (existedId) {
@@ -649,6 +653,7 @@ public class DimensionManager implements IGalaxy {
 			return true;
 		ArrayList<DimensionProperties> props = new ArrayList<DimensionProperties>();
 		ArrayList<Integer> ids = new ArrayList<Integer>();
+		ArrayList<Integer> habitableids = new ArrayList<Integer>();
 		boolean existed = false;
 		boolean existedId = false;
 		boolean habitableId = false;
@@ -658,7 +663,7 @@ public class DimensionManager implements IGalaxy {
 			existed = true;
 		}
 		if (HabitabledimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
-			ids = HabitabledimensionidsByGalaxy.get(properties.getName().substring(7, 9));
+			habitableids = HabitabledimensionidsByGalaxy.get(properties.getName().substring(7, 9));
 			habitableId = true;
 		}
 		if (dimensionidsByGalaxy.containsKey(properties.getName().substring(7, 9))) {
@@ -678,9 +683,9 @@ public class DimensionManager implements IGalaxy {
 		}
 		if (!properties.isStar() && !properties.isGasGiant() && properties.getAtmosphere().isBreathable()) {
 			if (habitableId) {
-				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), ids);
+				HabitabledimensionidsByGalaxy.replace(properties.getName().substring(7, 9), habitableids);
 			} else {
-				HabitabledimensionidsByGalaxy.put(properties.getName().substring(7, 9), ids);
+				HabitabledimensionidsByGalaxy.put(properties.getName().substring(7, 9), habitableids);
 			}
 		}
 		if (!properties.isStar() && !properties.isGasGiant()) {
